@@ -1,149 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-//test용 주석 추가
+import 'package:capstone/screens/party_board.dart';
+import 'package:capstone/screens/free_board.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: '자유게시판 앱',
-    home: FreeBoardScreen(),
-  ));
+  runApp(MyApp());
 }
 
-class FreeBoardScreen extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _FreeBoardScreenState createState() => _FreeBoardScreenState();
-}
-
-class _FreeBoardScreenState extends State<FreeBoardScreen> {
-  late Future<List<dynamic>> _jobposts;
-
-  @override
-  void initState() {
-    super.initState();
-    _jobposts = _fetchPosts();
-  }
-
-  Future<List<dynamic>> _fetchPosts() async {
-    final response = await http.get(Uri.parse('http://3.39.88.187:3000/posts?board_id=2'));
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to load posts');
-    }
-  }
-
-  Widget _buildPostItem(BuildContext context, dynamic post) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        padding: EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              post['post_title'],
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              post['post_content'],
-              style: TextStyle(
-                fontSize: 16.0,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  post['student_id'].toString(),
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey,
-                  ),
-                ),
-                Text(
-                  post['post_date'],
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Capstone',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: MyHomePage(),
     );
   }
+}
 
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '자유게시판',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-        elevation: 0.0,
+        title: Text('Capstone'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: FutureBuilder<List<dynamic>>(
-                future: _jobposts,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final jobposts = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: jobposts.length,
-                      itemBuilder: (context, index) {
-                        return _buildPostItem(context, jobposts[index]);
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('${snapshot.error}');
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PartyBoardScreen()), //이걸 바꾸면 다른 곳으로
+                );
+              },
+              child: Text(
+                '구인구직 게시판',
+                style: TextStyle(fontSize: 20),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FreeBoardScreen()), //이걸 바꾸면 다른 곳으로
+                );
+              },
+              child: Text(
+                '자유게시판',
+                style: TextStyle(fontSize: 20),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-        },
-        child: Icon(Icons.edit),
-      ),
     );
   }
 }
+
