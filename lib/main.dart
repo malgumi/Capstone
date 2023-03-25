@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+//test용 주석 추가
 
 void main() {
   runApp(MaterialApp(
@@ -15,16 +16,16 @@ class FreeBoardScreen extends StatefulWidget {
 }
 
 class _FreeBoardScreenState extends State<FreeBoardScreen> {
-  late Future<List<dynamic>> _posts;
+  late Future<List<dynamic>> _jobposts;
 
   @override
   void initState() {
     super.initState();
-    _posts = _fetchPosts();
+    _jobposts = _fetchPosts();
   }
 
   Future<List<dynamic>> _fetchPosts() async {
-    final response = await http.get(Uri.parse('http://3.39.88.187:3000/posts'));
+    final response = await http.get(Uri.parse('http://3.39.88.187:3000/posts?board_id=2'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -117,14 +118,14 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
           children: [
             Expanded(
               child: FutureBuilder<List<dynamic>>(
-                future: _posts,
+                future: _jobposts,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final posts = snapshot.data!;
+                    final jobposts = snapshot.data!;
                     return ListView.builder(
-                      itemCount: posts.length,
+                      itemCount: jobposts.length,
                       itemBuilder: (context, index) {
-                        return _buildPostItem(context, posts[index]);
+                        return _buildPostItem(context, jobposts[index]);
                       },
                     );
                   } else if (snapshot.hasError) {
