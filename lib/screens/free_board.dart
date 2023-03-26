@@ -141,7 +141,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
         },
-        child: Icon(Icons.edit),
+        child: Icon(Icons.add),
       ),
     );
   }
