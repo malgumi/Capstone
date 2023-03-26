@@ -26,7 +26,7 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
   }
 
   Future<List<dynamic>> _fetchPosts() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/jobposts?board_id=2'));
+    final response = await http.get(Uri.parse('http://3.39.88.187:3000/post/posts-get?board_id=2'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -108,7 +108,7 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: Color(0xffC1D3FF),
         centerTitle: true,
         elevation: 0.0,
       ),
@@ -148,6 +148,7 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
           );
         },
         child: Icon(Icons.add),
+        backgroundColor: Color(0xffC1D3FF),
       ),
     );
   }
