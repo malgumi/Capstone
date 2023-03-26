@@ -9,6 +9,18 @@
 .history
 .svn/
 migrate_working_dir/
+.metadata
+analysis_options.yaml
+pubspec.yaml
+pubspec.lock
+android/
+assets/
+ios/
+linux/
+macos/
+test/
+windows/
+web/
 
 # IntelliJ related
 *.iml
