@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'job_post_form.dart';
-//test용 주석 추가
 
 void main() {
   runApp(MaterialApp(
@@ -26,7 +25,7 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
   }
 
   Future<List<dynamic>> _fetchPosts() async {
-    final response = await http.get(Uri.parse('http://3.39.88.187:3000/post/posts-get?board_id=2'));
+    final response = await http.get(Uri.parse('http://3.39.88.187:3000/post/board-posts?board_id=2'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -42,14 +41,18 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           color: Colors.white,
-          boxShadow: [
+          /*boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 1,
               blurRadius: 5,
               offset: Offset(0, 3),
             ),
-          ],
+          ],*/
+          border: Border.all(
+            width: 2,
+            color: Colors.grey.withOpacity(0.5),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
