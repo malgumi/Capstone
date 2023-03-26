@@ -1,7 +1,5 @@
 # 캡스톤 디자인 19학번 조
 
-추후 gitignore수정예정
-
 ## 목차
 
 [0. 개요 및 목적](https://github.com/malgumi/Capstone/blob/main/README.md#0-%EA%B0%9C%EC%9A%94-%EB%B0%8F-%EB%AA%A9%EC%A0%81)
