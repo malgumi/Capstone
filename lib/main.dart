@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
 import 'package:capstone/screens/signup_form.dart';
-
+//ㅅㄷㄴㅅ
 void main() {
   runApp(MyApp());
 }
