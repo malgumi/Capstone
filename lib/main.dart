@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
+import 'package:capstone/screens/signup_form.dart';
 
 void main() {
   runApp(MyApp());
@@ -55,6 +56,22 @@ class MyHomePage extends StatelessWidget {
               },
               child: Text(
                 '자유게시판',
+                style: TextStyle(fontSize: 20),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()), //이걸 바꾸면 다른 곳으로
+                );
+              },
+              child: Text(
+                '가입화면',
                 style: TextStyle(fontSize: 20),
               ),
               style: ElevatedButton.styleFrom(
