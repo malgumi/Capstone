@@ -13,7 +13,7 @@ migrate_working_dir/
 #여기부터
 .metadata
 analysis_options.yaml
-pubspec.yaml
+#pubspec.yaml
 pubspec.lock
 android/
 assets/
