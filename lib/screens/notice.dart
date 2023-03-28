@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 void main() => runApp(MyApp());
 
@@ -6,19 +6,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      title: 'NOTICE_HOME',
       home: Scaffold(
         appBar: AppBar(
           title: Text(
             '한남대학교 컴퓨터공학과',
             textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black,),
           ),
           centerTitle: true,
+          backgroundColor: Color(0xffC1D3FF),
         ),
-        backgroundColor: Color(0xFFD8D8D8),
+        backgroundColor: Colors.white,
 
         body: Column(
           children: [
@@ -39,14 +38,7 @@ class MyApp extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
-                  ),
-                ],
+                border: Border.all(color: Colors.black, width: 0.3),
               ),
             ),
 
@@ -157,14 +149,7 @@ class MyApp extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+                  border: Border.all(color: Colors.black, width: 0.3),
                 ),
               ),
             ),
