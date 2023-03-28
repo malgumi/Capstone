@@ -10,7 +10,7 @@
 .svn/
 migrate_working_dir/
 
-
+#여기부터
 .metadata
 analysis_options.yaml
 pubspec.yaml
@@ -23,6 +23,7 @@ macos/
 test/
 windows/
 web/
+#여기까지
 
 # IntelliJ related
 *.iml
