@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'job_post_form.dart';
+import 'package:capstone/screens/PostScreen.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -34,66 +36,76 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
   }
 
   Widget _buildPostItem(BuildContext context, dynamic post) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        padding: EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          color: Colors.white,
-          /*boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: Offset(0, 3),
-            ),
-          ],*/
-          border: Border.all(
-            width: 2,
-            color: Colors.grey.withOpacity(0.5),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PostScreen(post: post),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              post['post_title'],
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.0),
+            color: Colors.white,
+            /*boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: Offset(0, 3),
               ),
+            ],*/
+            border: Border.all(
+              width: 2,
+              color: Colors.grey.withOpacity(0.5),
             ),
-            SizedBox(height: 8.0),
-            Text(
-              post['post_content'],
-              style: TextStyle(
-                fontSize: 16.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                post['post_title'],
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  post['student_id'].toString(),
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey,
-                  ),
+              SizedBox(height: 8.0),
+              Text(
+                post['post_content'],
+                style: TextStyle(
+                  fontSize: 16.0,
                 ),
-                Text(
-                  post['post_date'],
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    post['student_id'].toString().substring(2, 4) + '학번',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  Text(
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(post['post_date'])),
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
