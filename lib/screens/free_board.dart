@@ -160,7 +160,13 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
             MaterialPageRoute(
               builder: (context) => WritePostScreen(boardId: 1),
             ),
-          );
+          ).then((value) {
+            if (value == true) {
+              setState(() {
+                _posts = _fetchPosts();
+              });
+            }
+          });
         },
         child: Icon(Icons.add),
         backgroundColor: Color(0xffC1D3FF),
