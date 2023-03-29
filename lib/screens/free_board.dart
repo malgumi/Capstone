@@ -93,7 +93,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    post['student_id'].toString(),
+                    post['student_id'].toString().substring(2, 4) + '학번',
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,
