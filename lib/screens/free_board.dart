@@ -158,7 +158,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => WritePostScreen(),
+              builder: (context) => WritePostScreen(boardId: 1),
             ),
           );
         },
