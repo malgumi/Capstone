@@ -31,7 +31,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
 
   Future<List<dynamic>> _fetchPosts() async {
     final response = await http
-        .get(Uri.parse('http://localhost:3000/post/posts:?board_id=1'));
+        .get(Uri.parse('http://3.39.88.187:3000/post/posts:?board_id=1'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
