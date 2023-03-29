@@ -4,7 +4,7 @@ import 'package:capstone/screens/free_board.dart';
 import 'package:capstone/screens/signup_form.dart';
 import 'package:capstone/screens/login_form.dart';
 
-//ㅅㄷㄴㅅ
+//테스트용 주석
 void main() {
   runApp(MyApp());
 }
