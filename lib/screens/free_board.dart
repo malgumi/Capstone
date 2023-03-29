@@ -3,6 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/PostScreen.dart';
 import 'package:capstone/screens/WritePostScreen.dart';
+import 'package:intl/intl.dart';
+
+
+
 
 void main() {
   runApp(MaterialApp(
@@ -27,7 +31,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
 
   Future<List<dynamic>> _fetchPosts() async {
     final response = await http
-        .get(Uri.parse('http://3.39.88.187:3000/post/posts:?board_id=1'));
+        .get(Uri.parse('http://localhost:3000/post/posts:?board_id=1'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -96,7 +100,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
                     ),
                   ),
                   Text(
-                    post['post_date'],
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(post['post_date'])),
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,

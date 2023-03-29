@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PostScreen extends StatelessWidget {
   final dynamic post;
@@ -55,7 +56,7 @@ class PostScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  post['post_date'],
+                  DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(post['post_date'])),
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey,
