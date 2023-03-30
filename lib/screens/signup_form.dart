@@ -14,15 +14,20 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController student_id = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
   TextEditingController password= TextEditingController();
   TextEditingController password2 = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _key = GlobalKey<ScaffoldState>();
+  final storage = FlutterSecureStorage();
 
   @override
   void initState() {
     super.initState();
     student_id = TextEditingController(text: "");
+    name = TextEditingController(text: "");
+    email = TextEditingController(text: "");
     password = TextEditingController(text: "");
     password2 = TextEditingController(text: "");
   }
@@ -30,9 +35,65 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void dispose() {
     student_id.dispose();
+    name.dispose();
+    email.dispose();
     password.dispose();
     password2.dispose();
     super.dispose();
+  }
+
+  Future<void> signup(String nameValue, String emailValue) async {
+    final String studentId = student_id.text.trim();
+    final String name = nameValue.trim();
+    final String email = emailValue.trim();
+    final String passwordValue = password.text.trim();
+    final String password2Value = password2.text.trim();
+
+    if (passwordValue != password2Value) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("비밀번호가 다릅니다."),
+      ));
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/user/signup'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'student_id': studentId,
+          'name': name,
+          'email': email,
+          'password': passwordValue,
+        }),
+      );
+
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("회원가입에 성공했습니다."),
+        ));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      } else if (response.statusCode == 409) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("이미 가입된 학번입니다."),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("회원 가입에 실패했습니다."),
+        ));
+      }
+    } catch (error) {
+      print(error);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("회원 가입에 실패했습니다."),
+      ));
+    }
   }
 
   @override
@@ -56,8 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   (value!.isEmpty) ? "학번을 입력 해 주세요" : null,
                   style: style,
                   decoration: InputDecoration(
-                      labelText: "학번",
-                      border: OutlineInputBorder()),
+                      labelText: "학번", border: OutlineInputBorder()),
                 ),
               ),
               Padding(
@@ -97,21 +157,19 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: MaterialButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        Navigator.pop(context);
-                      }
-
-                      Future<String> login(String studentId, String password) async {
-                        final url = Uri.parse('http://3.39.88.187:3000/user/user.controller/login?student_id=$studentId&password=$password');
-                        final response = await http.get(url);
-
-                        if (response.statusCode == 200) {
-                          return response.body;
-                        } else {
-                          throw Exception('Failed to login');
+                        try {
+                          await signup(student_id.text, password.text);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginPage()),
+                          );
+                        } catch (error) {
+                          print(error);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("회원 가입에 실패했습니다."),
+                          ));
                         }
                       }
-                        //);
-
                     },
                     child: Text(
                       "회원 가입",
