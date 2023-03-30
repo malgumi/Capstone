@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class WritePostScreen extends StatefulWidget {
   final int boardId;
@@ -29,21 +30,45 @@ class _WritePostScreenState extends State<WritePostScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    final Map<String, dynamic> postData = {
+    // final storage = FlutterSecureStorage();
+    // final token = await storage.read(key: 'token');
+    // if (token == null) {
+    //   setState(() {
+    //     _isLoading = false;
+    //     _errorMessage = '토큰이 없습니다.';
+    //   });
+    //   return;
+    // }
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token != null) {
+      final parts = token.split('.');
+      final payload = parts[1];
+      final normalizedPayload = payload + '=' * (4 - payload.length % 4); // 길이를 4의 배수로 맞춰줌
+      final decoded = json.decode(utf8.decode(base64Url.decode(normalizedPayload)));
+      final student_id = decoded['student_id'];
+
+
+      final Map<String, dynamic> postData = {
       'board_id': widget.boardId,
-      'student_id': 20190580, // TODO: Change to user's ID
       'post_title': _titleController.text,
       'post_content': _contentController.text,
       'post_file': 'null', // TODO: Implement file uploading
+      'student_id' : student_id,
     };
 
     final response = await http.post(
-      Uri.parse('http://3.39.88.187:3000/post/:write'),
+      Uri.parse('http://3.39.88.187:3000/post/write'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+
       },
       body: jsonEncode(postData),
     );
+    print(token);
+
+
 
     if (response.statusCode == 201) {
       // Success
@@ -56,6 +81,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
         _errorMessage = responseData['message'];
       });
     }
+  }
   }
 
   @override
@@ -78,7 +104,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(
-                  hintText: '제목',
+                  hintText: '제목 ',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -104,16 +130,14 @@ class _WritePostScreenState extends State<WritePostScreen> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text('작성하기'),
+                child: Text('글쓰기'),
               ),
               SizedBox(height: 8.0),
-              Text(
-                _errorMessage,
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 14.0,
+              if (_errorMessage.isNotEmpty)
+                Text(
+                  _errorMessage,
+                  style: TextStyle(color: Colors.red),
                 ),
-              ),
             ],
           ),
         ),
