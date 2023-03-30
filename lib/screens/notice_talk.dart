@@ -26,7 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '한남대학교 컴퓨터공학과',
+          '컴퓨터공학과 전체 공지',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black,),
         ),
