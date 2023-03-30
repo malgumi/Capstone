@@ -1,8 +1,13 @@
 import "package:flutter/material.dart";
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MaterialApp(
+    title: '공지 알림톡',
+    home: Notice(),
+  ));
+}
 
-class MyApp extends StatelessWidget {
+class Notice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

@@ -1,3 +1,5 @@
+import 'package:capstone/screens/notice.dart';
+import 'package:capstone/screens/notice_talk.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
@@ -33,6 +35,22 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notice()), //이걸 바꾸면 다른 곳으로
+                );
+              },
+              child: Text(
+                '공지 알림톡',
+                style: TextStyle(fontSize: 20),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+              ),
+            ),
+            SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
