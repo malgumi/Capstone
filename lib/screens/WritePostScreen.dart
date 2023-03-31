@@ -30,23 +30,23 @@ class _WritePostScreenState extends State<WritePostScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
-    // final storage = FlutterSecureStorage();
-    // final token = await storage.read(key: 'token');
-    // if (token == null) {
-    //   setState(() {
-    //     _isLoading = false;
-    //     _errorMessage = '토큰이 없습니다.';
-    //   });
-    //   return;
-    // }
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
-    if (token != null) {
-      final parts = token.split('.');
-      final payload = parts[1];
-      final normalizedPayload = payload + '=' * (4 - payload.length % 4); // 길이를 4의 배수로 맞춰줌
-      final decoded = json.decode(utf8.decode(base64Url.decode(normalizedPayload)));
-      final student_id = decoded['student_id'];
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+      });
+      return;
+    }
+    // final storage = FlutterSecureStorage();
+    // final token = await storage.read(key: 'token');
+    // if (token != null) {
+    //   final parts = token.split('.');
+    //   final payload = parts[1];
+    //   final normalizedPayload = payload + '=' * (4 - payload.length % 4); // 길이를 4의 배수로 맞춰줌
+    //   final decoded = json.decode(utf8.decode(base64Url.decode(normalizedPayload)));
+    //   final student_id = decoded['student_id'];
 
 
       final Map<String, dynamic> postData = {
@@ -54,14 +54,14 @@ class _WritePostScreenState extends State<WritePostScreen> {
       'post_title': _titleController.text,
       'post_content': _contentController.text,
       'post_file': 'null', // TODO: Implement file uploading
-      'student_id' : student_id,
+
     };
 
     final response = await http.post(
       Uri.parse('http://3.39.88.187:3000/post/write'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
+        'Authorization': token,
 
       },
       body: jsonEncode(postData),
@@ -82,7 +82,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
       });
     }
   }
-  }
+
 
   @override
   Widget build(BuildContext context) {
