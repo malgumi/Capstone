@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'job_post_form.dart';
+import 'package:capstone/screens/WritePostScreen.dart';
 import 'package:capstone/screens/PostScreen.dart';
 import 'package:intl/intl.dart';
 
@@ -159,8 +159,16 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => JobPostForm()),
-          );
+            MaterialPageRoute(
+              builder: (context) => WritePostScreen(boardId: 2),
+            ),
+          ).then((value) {
+            if (value == true) {
+              setState(() {
+                _jobposts = _fetchPosts();
+              });
+            }
+          });
         },
         child: Icon(Icons.add),
         backgroundColor: Color(0xffC1D3FF),
