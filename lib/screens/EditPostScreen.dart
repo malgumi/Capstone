@@ -52,7 +52,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     };
 
     final response = await http.post(
-      Uri.parse('http://localhost:3000/post/updatepost?post_id=${widget.post['post_id']}'),
+      Uri.parse('http://3.39.88.187:3000/post/updatepost?post_id=${widget.post['post_id']}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,

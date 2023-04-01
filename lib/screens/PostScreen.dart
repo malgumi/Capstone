@@ -28,7 +28,7 @@ class _PostScreenState extends State<PostScreen> {
 
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(Uri.parse(
-        'http://localhost:3000/post/comment:?post_id=${widget.post['post_id']}'));
+        'http://3.39.88.187:3000/post/comment:?post_id=${widget.post['post_id']}'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -66,7 +66,7 @@ class _PostScreenState extends State<PostScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('http://localhost:3000/post/deletepost/${widget.post['post_id']}'),
+      Uri.parse('http://3.39.88.187:3000/post/deletepost/${widget.post['post_id']}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
