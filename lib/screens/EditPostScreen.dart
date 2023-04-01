@@ -35,7 +35,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
-    print(token);
 
     if (token == null) {
       setState(() {
@@ -60,7 +59,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
       },
       body: jsonEncode(postData),
     );
-    print(response.body); // 로그 추가
 
     setState(() => _isLoading = false); // 버튼 활성화
     if (response.statusCode == 200) {
