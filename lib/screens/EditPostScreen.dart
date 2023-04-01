@@ -79,7 +79,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
         builder: (context) {
           return AlertDialog(
             title: Text('글 수정 실패'),
-            content: Text('서버에서 요청을 처리하는 도중 오류가 발생했습니다.'),
+            content: Text('수정 권한이 없습니다.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -100,6 +100,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('글 수정'),
+        backgroundColor: Color(0xffC1D3FF),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -119,6 +120,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
             SizedBox(height: 32.0),
             ElevatedButton(
               onPressed: _isLoading ? null : updatePost, // 버튼 활성화 여부 설정
+              style: ElevatedButton.styleFrom(
+                primary: Color(0xffC1D3FF), // 이 색상 코드를 변경하면 됩니다.
+              ),
               child: _isLoading ? CircularProgressIndicator() : Text(
                   '저장'), // 로딩 중일 때는 로딩 아이콘을 보여줌
             ),

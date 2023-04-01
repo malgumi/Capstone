@@ -80,6 +80,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('글쓰기'),
+        backgroundColor: Color(0xffC1D3FF),
       ),
       body: _isLoading
           ? Center(
@@ -119,11 +120,16 @@ class _WritePostScreenState extends State<WritePostScreen> {
                 },
               ),
               SizedBox(height: 16.0),
+
               ElevatedButton(
                 onPressed: _submitForm,
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xffC1D3FF), // 이 색상 코드를 변경하면 됩니다.
+                ),
                 child: Text('글쓰기'),
               ),
               SizedBox(height: 8.0),
+
               if (_errorMessage.isNotEmpty)
                 Text(
                   _errorMessage,
