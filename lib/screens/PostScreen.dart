@@ -44,7 +44,7 @@ class _PostScreenState extends State<PostScreen> {
     setState(() => _isLoading = true);
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
-
+    print(token);
     if (token == null) {
       setState(() {
         _isLoading = false;
@@ -58,10 +58,9 @@ class _PostScreenState extends State<PostScreen> {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
       },
-      body: {
-        'post_id': postId.toString(),
+      body: jsonEncode( {
         'comment_content': content,
-      },
+      }),
     );
     if (response.statusCode == 201) {
       // 입력 성공 처리
