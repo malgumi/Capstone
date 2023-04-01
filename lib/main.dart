@@ -6,7 +6,6 @@ import 'package:capstone/screens/free_board.dart';
 import 'package:capstone/screens/signup_form.dart';
 import 'package:capstone/screens/login_form.dart';
 
-//테스트용 주석
 void main() {
   runApp(MyApp());
 }
@@ -30,32 +29,38 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Capstone'),
+        backgroundColor: Color(0xffC1D3FF),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Notice()), //이걸 바꾸면 다른 곳으로
+                  MaterialPageRoute(builder: (context) => Notice()),
                 );
               },
               child: Text(
                 '공지 알림톡',
                 style: TextStyle(fontSize: 20),
+
               ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
+                backgroundColor: Color(0xffC1D3FF),
               ),
+
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PartyBoardScreen()), //이걸 바꾸면 다른 곳으로
+                  MaterialPageRoute(builder: (context) => PartyBoardScreen()),
                 );
               },
               child: Text(
@@ -64,6 +69,7 @@ class MyHomePage extends StatelessWidget {
               ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
+                backgroundColor: Color(0xffC1D3FF),
               ),
             ),
             SizedBox(height: 20.0),
@@ -71,7 +77,7 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FreeBoardScreen()), //이걸 바꾸면 다른 곳으로
+                  MaterialPageRoute(builder: (context) => FreeBoardScreen()),
                 );
               },
               child: Text(
@@ -80,6 +86,7 @@ class MyHomePage extends StatelessWidget {
               ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
+                backgroundColor: Color(0xffC1D3FF),
               ),
             ),
             SizedBox(height: 20.0),
@@ -87,7 +94,7 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()), //이걸 바꾸면 다른 곳으로
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
               child: Text(
@@ -96,6 +103,7 @@ class MyHomePage extends StatelessWidget {
               ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
+                backgroundColor: Color(0xffC1D3FF),
               ),
             ),
           ],
@@ -104,4 +112,3 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-

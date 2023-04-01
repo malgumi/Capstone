@@ -5,9 +5,6 @@ import 'package:capstone/screens/PostScreen.dart';
 import 'package:capstone/screens/WritePostScreen.dart';
 import 'package:intl/intl.dart';
 
-
-
-
 void main() {
   runApp(MaterialApp(
     title: '자유게시판 앱',
@@ -41,13 +38,16 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
 
   Widget _buildPostItem(BuildContext context, dynamic post) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PostScreen(post: post),
           ),
         );
+        setState(() {
+          _posts = _fetchPosts();
+        });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -100,7 +100,8 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
                     ),
                   ),
                   Text(
-                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(post['post_date'])),
+                    DateFormat('yyyy-MM-dd HH:mm:ss')
+                        .format(DateTime.parse(post['post_date'])),
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,
@@ -133,28 +134,26 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Expanded(
-          child: FutureBuilder<List<dynamic>>(
-            future: _posts,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final posts = snapshot.data!;
-                return ListView.builder(
-                  itemCount: posts.length,
-                  itemBuilder: (context, index) {
-                    return _buildPostItem(context, posts[index]);
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('${snapshot.error}'),
-                );
-              }
-              return Center(
-                child: CircularProgressIndicator(),
+        child: FutureBuilder<List<dynamic>>(
+          future: _posts,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final posts = snapshot.data!;
+              return ListView.builder(
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  return _buildPostItem(context, posts[index]);
+                },
               );
-            },
-          ),
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('${snapshot.error}'),
+              );
+            }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(

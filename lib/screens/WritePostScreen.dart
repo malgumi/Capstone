@@ -39,15 +39,6 @@ class _WritePostScreenState extends State<WritePostScreen> {
       });
       return;
     }
-    // final storage = FlutterSecureStorage();
-    // final token = await storage.read(key: 'token');
-    // if (token != null) {
-    //   final parts = token.split('.');
-    //   final payload = parts[1];
-    //   final normalizedPayload = payload + '=' * (4 - payload.length % 4); // 길이를 4의 배수로 맞춰줌
-    //   final decoded = json.decode(utf8.decode(base64Url.decode(normalizedPayload)));
-    //   final student_id = decoded['student_id'];
-
 
       final Map<String, dynamic> postData = {
       'board_id': widget.boardId,
