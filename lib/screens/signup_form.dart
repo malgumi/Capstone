@@ -42,12 +42,13 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  Future<void> signup(String nameValue, String emailValue) async {
-    final String studentId = student_id.text.trim();
-    final String name = nameValue.trim();
-    final String email = emailValue.trim();
-    final String passwordValue = password.text.trim();
-    final String password2Value = password2.text.trim();
+  Future<void> signup(String student_id, String email, String name, String password) async {
+    final String apiUrl='http://localhost:3000/user/signup';
+    final String studentId = student_id.trim();
+    final String nameValue = name.trim();
+    final String emailValue = email.trim();
+    final String passwordValue = password.trim();
+    final String password2Value = password.trim();
 
     if (passwordValue != password2Value) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -58,14 +59,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://3.39.88.187:3000/user/signup'),
+        Uri.parse(apiUrl),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
           'student_id': studentId,
-          'name': name,
-          'email': email,
+          'name': nameValue,
+          'email': emailValue,
           'password': passwordValue,
         }),
       );
@@ -123,6 +124,28 @@ class _SignUpPageState extends State<SignUpPage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
+                  controller: email,
+                  validator: (value) =>
+                  (value!.isEmpty) ? "이메일을 입력 해 주세요" : null,
+                  style: style,
+                  decoration: InputDecoration(
+                      labelText: "이메일", border: OutlineInputBorder()),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: name,
+                  validator: (value) =>
+                  (value!.isEmpty) ? "이름을 입력 해 주세요" : null,
+                  style: style,
+                  decoration: InputDecoration(
+                      labelText: "이름", border: OutlineInputBorder()),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
                   obscureText: true,
                   controller: password,
                   validator: (value) =>
@@ -158,7 +181,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
-                          await signup(student_id.text, password.text);
+                          await signup(student_id.text, email.text, name.text, password.text);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => LoginPage()),
