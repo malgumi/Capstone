@@ -53,7 +53,7 @@ class _PostScreenState extends State<PostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '자유게시판',
+          widget.post['post_title'],
           style: TextStyle(
             color: Colors.white,
             fontSize: 20.0,
@@ -77,14 +77,6 @@ class _PostScreenState extends State<PostScreen> {
           children: [
             SizedBox(height: 16.0),
             Text(
-              widget.post['post_title'],
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16.0),
-            Text(
               widget.post['post_content'],
               style: TextStyle(
                 fontSize: 16.0,
@@ -94,8 +86,16 @@ class _PostScreenState extends State<PostScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                widget.post['board_id'] == 1 ?
                 Text(
                   widget.post['student_id'].toString().substring(2, 4) + '학번',
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.grey,
+                  ),
+                ) :
+                Text(
+                  widget.post['student_id'].toString(),
                   style: TextStyle(
                     fontSize: 14.0,
                     color: Colors.grey,
@@ -143,11 +143,19 @@ class _PostScreenState extends State<PostScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                widget.post['board_id'] == 1 ?
                                 Text(
                                   snapshot.data![index]['student_id']
                                           .toString()
                                           .substring(2, 4) +
                                       '학번',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ) :
+                                Text(
+                                  snapshot.data![index]['student_id']
+                                      .toString(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),

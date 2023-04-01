@@ -89,7 +89,7 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    post['student_id'].toString().substring(2, 4) + '학번',
+                    post['student_id'].toString(),
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,
