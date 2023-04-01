@@ -184,8 +184,8 @@ class _PostScreenState extends State<PostScreen> {
                                 widget.post['board_id'] == 1 ?
                                 Text(
                                   snapshot.data![index]['student_id']
-                                          .toString()
-                                          .substring(2, 4) +
+                                      .toString()
+                                      .substring(2, 4) +
                                       '학번',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -209,7 +209,7 @@ class _PostScreenState extends State<PostScreen> {
                                 Text(
                                   DateFormat('yyyy-MM-dd HH:mm:ss').format(
                                       DateTime.parse(snapshot.data![index]
-                                          ['comment_date'])),
+                                      ['comment_date'])),
                                   style: TextStyle(
                                     fontSize: 12.0,
                                     color: Colors.grey,
