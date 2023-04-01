@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MaterialApp(
+    title: '전체 공지방',
+    home: Notice_Talk(),
+  ));
+}
 
-class MyApp extends StatelessWidget {
+class Notice_Talk extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
