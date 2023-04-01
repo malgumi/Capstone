@@ -19,6 +19,7 @@ class _PostScreenState extends State<PostScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _errorMessage = '';
   bool _isLoading = false;
+  TextEditingController _commentController = TextEditingController();
 
   @override
   void initState() {
@@ -26,6 +27,7 @@ class _PostScreenState extends State<PostScreen> {
     comments = fetchComments();
   }
 
+  //댓글 가져오기
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(Uri.parse(
         'http://3.39.88.187:3000/post/comment:?post_id=${widget.post['post_id']}'));
@@ -35,6 +37,34 @@ class _PostScreenState extends State<PostScreen> {
       throw Exception('Failed to load posts');
     }
   }
+
+  //댓글 입력
+  Future<void> postComment(int postId, String content) async {
+    final url = Uri.parse('http://3.39.88.187:3000/post/commentwrite');
+    final response = await http.post(
+      url,
+      body: {
+        'post_id': postId.toString(),
+        'comment_content': content,
+      },
+    );
+    if (response.statusCode == 201) {
+      // 입력 성공 처리
+      // 예시:
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 성공적으로 입력되었습니다.')));
+      _commentController.clear(); // 댓글 입력 완료 후, TextField를 초기화합니다.
+      setState(() {
+        comments = fetchComments(); // 댓글 리스트를 다시 불러옵니다.
+      });
+    } else {
+      // 실패 처리
+      // 예시:
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 입력에 실패했습니다.')));
+    }
+  }
+
+
+
   void _navigateToEditPostScreen() {
     Navigator.push(
       context,
@@ -240,6 +270,36 @@ class _PostScreenState extends State<PostScreen> {
               },
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          height: 64.0,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _commentController,
+                  decoration: InputDecoration(
+                    hintText: '댓글을 입력해주세요.',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  if (_commentController.text.isNotEmpty) {
+                    final content = _commentController.text;
+                    final postId = widget.post['post_id'];
+                    postComment(postId, content);
+                  }
+                },
+                icon: Icon(Icons.send),
+              ),
+            ],
+          ),
         ),
       ),
     );
