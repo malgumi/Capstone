@@ -44,7 +44,6 @@ class _PostScreenState extends State<PostScreen> {
     setState(() => _isLoading = true);
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
-    print(token);
     if (token == null) {
       setState(() {
         _isLoading = false;
