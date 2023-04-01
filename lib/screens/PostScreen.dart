@@ -40,9 +40,24 @@ class _PostScreenState extends State<PostScreen> {
 
   //댓글 입력
   Future<void> postComment(int postId, String content) async {
-    final url = Uri.parse('http://3.39.88.187:3000/post/commentwrite');
+    final url = Uri.parse('http://3.39.88.187:3000/post/commentwrite/${widget.post['post_id']}');
+    setState(() => _isLoading = true);
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+      });
+      return;
+    }
     final response = await http.post(
       url,
+      headers: <String, String>{ //헤더파일 추가
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
       body: {
         'post_id': postId.toString(),
         'comment_content': content,
@@ -87,7 +102,7 @@ class _PostScreenState extends State<PostScreen> {
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
 
-    if (token == null) {
+    if (token == null) { //토쿤
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
@@ -97,7 +112,7 @@ class _PostScreenState extends State<PostScreen> {
 
     final response = await http.post(
       Uri.parse('http://3.39.88.187:3000/post/deletepost/${widget.post['post_id']}'),
-      headers: <String, String>{
+      headers: <String, String>{ //헤더파일 추가
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
       },
