@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/EditPostScreen.dart';
 
 class PostScreen extends StatefulWidget {
@@ -15,6 +16,9 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   late Future<List<dynamic>> comments;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _errorMessage = '';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -24,7 +28,7 @@ class _PostScreenState extends State<PostScreen> {
 
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(Uri.parse(
-        'http://3.39.88.187:3000/post/comment:?post_id=${widget.post['post_id']}'));
+        'http://localhost:3000/post/comment:?post_id=${widget.post['post_id']}'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -47,6 +51,33 @@ class _PostScreenState extends State<PostScreen> {
       });
     });
   }
+  Future<void> deletePost() async {
+
+    setState(() => _isLoading = true);
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+      });
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/post/deletepost/${widget.post['post_id']}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+    );
+    if (response.statusCode == 200) {
+      print('게시물 삭제 완료');
+    } else {
+      throw Exception('Failed to delete post');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +98,13 @@ class _PostScreenState extends State<PostScreen> {
           IconButton(
             onPressed: _navigateToEditPostScreen,
             icon: Icon(Icons.edit),
+          ),
+          IconButton(
+            onPressed: () async {
+              await deletePost();
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.delete),
           ),
         ],
       ),
