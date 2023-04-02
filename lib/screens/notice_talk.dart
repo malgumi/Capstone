@@ -25,8 +25,18 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
+Future<List<dynamic>> fetchTalks() async {
+  final response = await http.get(Uri.parse('http://3.39.88.187:3000/notice_talk/write'));
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to load notice');
+  }
+}
+
+
 class _ChatScreenState extends State<ChatScreen> {
-  final List<Message> _messages = [];
+  late Future<List<dynamic>> _talks;  //???
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +57,10 @@ class _ChatScreenState extends State<ChatScreen> {
         children: <Widget>[
           Flexible(
             child: ListView.builder(
-              itemCount: _messages.length,
+              //itemCount: _talks.length,
               reverse: true,  //최근글이 아래쪽으로 오도록
               itemBuilder: (BuildContext context, int index) {
-                final Message message = _messages[index];
+                final Message message = _talks[index];
                 final bool isMe = message.sender == currentUser;
 
                 return _buildMessage(message, isMe);
@@ -209,7 +219,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   final TextEditingController _textController = TextEditingController();
-  final String currentUser = '내 이름';
+  final String currentUser = notice_talk['name'];
 }
 
 class Message {
@@ -226,4 +236,6 @@ class Message {
     required this.isLiked,
     required this.unread,
   });
+
+  factory Message.fromJson
 }
