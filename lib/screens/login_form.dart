@@ -66,6 +66,7 @@ class _LoginPageState extends State<LoginPage> { //LoginPage  --> _LoginPageStat
     return Scaffold(
       appBar: AppBar(
         title: Text('로그인'), //APP BAR 만들기
+        backgroundColor: Color(0xffC1D3FF),
       ),
       body: Padding( //body는 appbar아래 화면을 지정.
         padding: const EdgeInsets.all(8.0),

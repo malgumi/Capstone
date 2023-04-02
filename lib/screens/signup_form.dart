@@ -4,7 +4,6 @@ import 'dart:convert'; // JSON Encode, Decode를 위한 패키지
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // flutter_secure_storage 패키지
 import 'package:capstone/screens/login_form.dart';
 
-//다시push
 /// 회원가입 화면
 class SignUpPage extends StatefulWidget {
   @override
@@ -21,6 +20,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final _key = GlobalKey<ScaffoldState>();
   final storage = FlutterSecureStorage();
+  String _selectedGrade = "1학년"; //초기값은 1학년으로 설정
 
   @override
   void initState() {
@@ -42,13 +42,14 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  Future<void> signup(String student_id, String email, String name, String password) async {
+  Future<void> signup(String student_id, String email, String name, String password, int grade) async {
     final String apiUrl='http://3.39.88.187:3000/user/signup';
     final String studentId = student_id.trim();
     final String nameValue = name.trim();
     final String emailValue = email.trim();
     final String passwordValue = password.trim();
     final String password2Value = password.trim();
+    final int gradeValue = grade;
 
     if (passwordValue != password2Value) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -63,11 +64,12 @@ class _SignUpPageState extends State<SignUpPage> {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{
+        body: jsonEncode(<String, dynamic>{
           'student_id': studentId,
           'name': nameValue,
           'email': emailValue,
           'password': passwordValue,
+          'grade': gradeValue,
         }),
       );
 
@@ -98,11 +100,69 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   @override
+  void _showGradeSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                GestureDetector(
+                  child: Text('1학년'),
+                  onTap: () {
+                    setState(() {
+                      _selectedGrade = '1학년';
+                    });
+                    Navigator.of(context).pop();
+                    signup(student_id.text, email.text, name.text, password.text, 1);
+                  },
+                ),
+                GestureDetector(
+                  child: Text('2학년'),
+                  onTap: () {
+                    setState(() {
+                      _selectedGrade = '2학년';
+                    });
+                    Navigator.of(context).pop();
+                    signup(student_id.text, email.text, name.text, password.text, 2);
+                  },
+                ),
+                GestureDetector(
+                  child: Text('3학년'),
+                  onTap: () {
+                    setState(() {
+                      _selectedGrade = '3학년';
+                    });
+                    Navigator.of(context).pop();
+                    signup(student_id.text, email.text, name.text, password.text, 3);
+                  },
+                ),
+                GestureDetector(
+                  child: Text('4학년'),
+                  onTap: () {
+                    setState(() {
+                      _selectedGrade = '4학년';
+                    });
+                    Navigator.of(context).pop();
+                    signup(student_id.text, email.text, name.text, password.text, 4);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _key,
       appBar: AppBar(
         title: Text("계정 만들기"),
+        backgroundColor: Color(0xffC1D3FF),
       ),
       body: Form(
         key: _formKey,
@@ -173,6 +233,29 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '학년',
+                    ),
+                    Text(
+                      _selectedGrade,
+                      style: TextStyle(fontSize: 30),
+                    ),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        _showGradeSelectionDialog();
+                      },
+                      child: Text('선택'),
+                    ),
+
+                  ],
+
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Material(
                   elevation: 5.0,
                   borderRadius: BorderRadius.circular(30.0),
@@ -181,7 +264,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
-                          await signup(student_id.text, email.text, name.text, password.text);
+                          _showGradeSelectionDialog();
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => LoginPage()),
