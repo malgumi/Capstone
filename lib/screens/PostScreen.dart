@@ -77,6 +77,35 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  //댓글 삭제
+  Future<void> _deleteComment(int commentId) async {
+    final url = Uri.parse('http://3.39.88.187:3000/post/deletecomment?comment_id=$commentId');
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    print(token);
+    if (token == null) {
+      setState(() {
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 삭제에 실패했습니다.(로그인 만료)')));
+      });
+      return;
+    }
+    final response = await http.delete(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+    );
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 삭제되었습니다.')));
+      setState(() {
+        comments = fetchComments();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 삭제에 실패했습니다.')));
+    }
+  }
 
 
   void _navigateToEditPostScreen() async{
@@ -271,7 +300,9 @@ class _PostScreenState extends State<PostScreen> {
                                     color: Colors.grey,
                                   ),
                                 ),
-                                Divider(),
+                                SizedBox(height: 4.0),
+                                IconButton(onPressed: () => _deleteComment(snapshot.data![index]['comment_id']),
+                                    icon: Icon(Icons.cancel_presentation)),
                               ],
                             ),
                           );
