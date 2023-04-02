@@ -40,6 +40,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
+
       });
       return;
     }

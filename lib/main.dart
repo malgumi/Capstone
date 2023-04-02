@@ -34,39 +34,49 @@ class _MyHomePageState extends State<MyHomePage> {
   String _errorMessage = '';
   bool _isLoading = false;
 
-  Future<void> _logout(BuildContext context) async {
-    final url = Uri.parse('http://3.39.88.187:3000/user/logout');
-    setState(() => _isLoading = true);
-    final storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'token');
-    print(token);
-    if (token == null) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = '토큰이 없습니다.';
-      });
-      return;
-    }
-    final response = await http.post(
-      url,
-      headers: <String, String>{ //헤더파일 추가
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': token,
-      },
-      body: jsonEncode( {
-        'content': 'logout',
-      }),
-    );
+  // Future<void> _logout(BuildContext context) async {
+  //   final url = Uri.parse('http://3.39.88.187:3000/user/logout');
+  //   setState(() => _isLoading = true);
+  //   final storage = FlutterSecureStorage();
+  //   final token = await storage.read(key: 'token');
+  //   print(token);
+  //   if (token == null) {
+  //     setState(() {
+  //       _isLoading = false;
+  //       _errorMessage = '토큰이 없습니다.';
+  //     });
+  //     return;
+  //   }
+  //   final response = await http.post(
+  //     url,
+  //     headers: <String, String>{ //헤더파일 추가
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //       'Authorization': token,
+  //     },
+  //     body: jsonEncode( {
+  //       'content': 'logout',
+  //     }),
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => MyHomePage()),
+  //           (Route<dynamic> route) => false,
+  //     );
+  //   } else {
+  //     // handle error
+  //   }
+  // }
 
-    if (response.statusCode == 200) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => MyHomePage()),
-            (Route<dynamic> route) => false,
-      );
-    } else {
-      // handle error
-    }
+  void logout() async {
+    final storage = new FlutterSecureStorage();
+    await storage.delete(key: 'token');
+    Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+                  (Route<dynamic> route) => false,
+            );
   }
 
   @override
@@ -78,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () => _logout(context),
+            onPressed: () => logout(),
           )
         ],
       ),

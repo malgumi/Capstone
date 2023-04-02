@@ -48,6 +48,7 @@ class _PostScreenState extends State<PostScreen> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 입력에 실패했습니다.(로그인 만료)')));
       });
       return;
     }
@@ -78,7 +79,18 @@ class _PostScreenState extends State<PostScreen> {
 
 
 
-  void _navigateToEditPostScreen() {
+  void _navigateToEditPostScreen() async{
+    setState(() => _isLoading = true);
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('게시글 수정에 실패 했습니다.(로그인 만료)')));
+      });
+      return;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -99,11 +111,12 @@ class _PostScreenState extends State<PostScreen> {
     setState(() => _isLoading = true);
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
-
+    print(token);
     if (token == null) { //토쿤
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('게시글 삭제에 실패했습니다. (로그인 만료)')));
       });
       return;
     }
