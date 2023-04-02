@@ -208,6 +208,7 @@ class _PostScreenState extends State<PostScreen> {
               style: TextStyle(
                 fontSize: 16.0,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 16.0),
             Row(
@@ -287,14 +288,25 @@ class _PostScreenState extends State<PostScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: 4.0),
-                                Text(
-                                  snapshot.data![index]['comment_content'],
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                  ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      overflow: TextOverflow.ellipsis, // 댓글 내용이 길어질 때 ...로 표시
+                                      maxLines: 3, // 최대 3줄까지 출력
+                                      snapshot.data![index]['comment_content'].toString(),
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.cancel_outlined),
+                                      iconSize: 18,
+                                      color: Colors.grey,
+                                      onPressed: () => _deleteComment(snapshot.data![index]['comment_id']),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(height: 4.0),
                                 Text(
                                   DateFormat('yyyy-MM-dd HH:mm:ss').format(
                                       DateTime.parse(snapshot.data![index]
@@ -304,9 +316,7 @@ class _PostScreenState extends State<PostScreen> {
                                     color: Colors.grey,
                                   ),
                                 ),
-                                SizedBox(height: 4.0),
-                                IconButton(onPressed: () => _deleteComment(snapshot.data![index]['comment_id']),
-                                    icon: Icon(Icons.cancel_presentation)),
+                                Divider(),
                               ],
                             ),
                           );
