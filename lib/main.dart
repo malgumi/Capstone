@@ -6,6 +6,7 @@ import 'package:capstone/screens/login_form.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+import 'package:capstone/screens/profile.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,49 +35,14 @@ class _MyHomePageState extends State<MyHomePage> {
   String _errorMessage = '';
   bool _isLoading = false;
 
-  // Future<void> _logout(BuildContext context) async {
-  //   final url = Uri.parse('http://3.39.88.187:3000/user/logout');
-  //   setState(() => _isLoading = true);
-  //   final storage = FlutterSecureStorage();
-  //   final token = await storage.read(key: 'token');
-  //   print(token);
-  //   if (token == null) {
-  //     setState(() {
-  //       _isLoading = false;
-  //       _errorMessage = '토큰이 없습니다.';
-  //     });
-  //     return;
-  //   }
-  //   final response = await http.post(
-  //     url,
-  //     headers: <String, String>{ //헤더파일 추가
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //       'Authorization': token,
-  //     },
-  //     body: jsonEncode( {
-  //       'content': 'logout',
-  //     }),
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     Navigator.pushAndRemoveUntil(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => MyHomePage()),
-  //           (Route<dynamic> route) => false,
-  //     );
-  //   } else {
-  //     // handle error
-  //   }
-  // }
-
   void logout() async {
     final storage = new FlutterSecureStorage();
     await storage.delete(key: 'token');
     Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MyHomePage()),
-                  (Route<dynamic> route) => false,
-            );
+      context,
+      MaterialPageRoute(builder: (context) => MyHomePage()),
+      (Route<dynamic> route) => false,
+    );
   }
 
   @override
@@ -87,9 +53,18 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color(0xffC1D3FF),
         actions: [
           IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Profile()),
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.logout),
             onPressed: () => logout(),
-          )
+          ),
         ],
       ),
       body: Padding(
@@ -108,13 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text(
                 '공지 알림톡',
                 style: TextStyle(fontSize: 20),
-
               ),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 20.0),
                 backgroundColor: Color(0xffC1D3FF),
               ),
-
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
@@ -159,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               child: Text(
-                '가입화면',
+                '로그인',
                 style: TextStyle(fontSize: 20),
               ),
               style: ElevatedButton.styleFrom(
