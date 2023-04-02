@@ -21,6 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _key = GlobalKey<ScaffoldState>();
   final storage = FlutterSecureStorage();
   String _selectedGrade = "1학년"; //초기값은 1학년으로 설정
+  int gradeValue =1;
 
   @override
   void initState() {
@@ -88,7 +89,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("회원 가입에 실패했습니다."),
+          content: Text("회원 가입에 성공?했습니다"),
         ));
       }
     } catch (error) {
@@ -113,9 +114,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   onTap: () {
                     setState(() {
                       _selectedGrade = '1학년';
+                      gradeValue = 1;
                     });
                     Navigator.of(context).pop();
-                    signup(student_id.text, email.text, name.text, password.text, 1);
+
                   },
                 ),
                 GestureDetector(
@@ -123,9 +125,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   onTap: () {
                     setState(() {
                       _selectedGrade = '2학년';
+                      gradeValue = 2;
                     });
                     Navigator.of(context).pop();
-                    signup(student_id.text, email.text, name.text, password.text, 2);
+
                   },
                 ),
                 GestureDetector(
@@ -133,9 +136,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   onTap: () {
                     setState(() {
                       _selectedGrade = '3학년';
+                      gradeValue = 3;
                     });
                     Navigator.of(context).pop();
-                    signup(student_id.text, email.text, name.text, password.text, 3);
+
                   },
                 ),
                 GestureDetector(
@@ -143,9 +147,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   onTap: () {
                     setState(() {
                       _selectedGrade = '4학년';
+                      gradeValue = 4;
                     });
                     Navigator.of(context).pop();
-                    signup(student_id.text, email.text, name.text, password.text, 4);
+
                   },
                 ),
               ],
@@ -264,7 +269,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
-                          _showGradeSelectionDialog();
+                          await signup(student_id.text, email.text, name.text, password.text, gradeValue);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (context) => LoginPage()),
