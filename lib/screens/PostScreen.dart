@@ -102,7 +102,11 @@ class _PostScreenState extends State<PostScreen> {
       setState(() {
         comments = fetchComments();
       });
-    } else {
+    }
+    else if (response.statusCode == 300){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('삭제 권한이 없습니다.')));
+    }
+    else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 삭제에 실패했습니다.')));
     }
   }
