@@ -74,7 +74,6 @@ class _SignUpPageState extends State<SignUpPage> {
         }),
       );
 
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("회원가입에 성공했습니다."),
