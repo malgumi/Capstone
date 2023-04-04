@@ -36,12 +36,12 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
     }
   }
 
-  Future _fetchCommentsCount(int postId) async {
+  //댓글 갯수 표시 기능 구현중
+  Future _fetchCommentsCount() async {
     final response = await http.get(
       Uri.parse('http://3.39.88.187:3000/post/commentsAll'),
     );
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to load comments count');
@@ -114,37 +114,38 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
                       color: Colors.grey,
                     ),
                   ),
-                  StreamBuilder(
-                    stream: _fetchCommentsCount(post['post_id']).asStream(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final comments = snapshot.data;
-                        int commentCount = 0;
-                        if (comments is List) {
-                          final matchingComments = comments?.where((comment) => comment['post_id'] == post['post_id']);
-                          if (matchingComments != null && matchingComments.isNotEmpty) {
-                            commentCount = matchingComments.first['comment_count'];
-                          }
-                        }
-                        return Text(
-                          '댓글 $commentCount',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.grey,
-                          ),
-                        );
-                      } else {
-                        return Text(
-                          '로딩 중...',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.grey,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ], // 여기에 닫는 중괄호(`}`) 추가
+                  //댓글 갯수 표시 기능 구현중
+                  // StreamBuilder(
+                  //   stream: _fetchCommentsCount().asStream(),
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.hasData) {
+                  //       final comments = snapshot.data;
+                  //       int commentCount = 0;
+                  //       if (comments is List) {
+                  //         final matchingComments = comments?.where((comment) => comment['post_id'] == post['post_id']);
+                  //         if (matchingComments != null && matchingComments.isNotEmpty) {
+                  //           commentCount = matchingComments.first['comment_count'];
+                  //         }
+                  //       }
+                  //       return Text(
+                  //         '댓글 $commentCount',
+                  //         style: TextStyle(
+                  //           fontSize: 14.0,
+                  //           color: Colors.grey,
+                  //         ),
+                  //       );
+                  //     } else {
+                  //       return Text(
+                  //         '로딩 중...',
+                  //         style: TextStyle(
+                  //           fontSize: 14.0,
+                  //           color: Colors.grey,
+                  //         ),
+                  //       );
+                  //     }
+                  //   },
+                  // ),
+                ],
               ),
             ],
           ),
