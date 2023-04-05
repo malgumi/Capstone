@@ -57,16 +57,17 @@ class _ChatScreenState extends State<ChatScreen> {
         children: <Widget>[
           Flexible(
             child: ListView.builder(
-              //itemCount: _talks.length,
+              //itemCount: Message.length,
               reverse: true,  //최근글이 아래쪽으로 오도록
               itemBuilder: (BuildContext context, int index) {
-                final Message message = _talks[index];
+                final Message message = Message.fromJson(_talks[index]);
                 final bool isMe = message.sender == currentUser;
 
                 return _buildMessage(message, isMe);
               },
             ),
           ),
+
           Divider(height: 1.0),
           Container(
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
