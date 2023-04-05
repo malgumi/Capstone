@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/login_form.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:capstone/screens/notice.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key? key}) : super(key: key);
@@ -103,8 +104,6 @@ class _MyDrawerState extends State<MyDrawer> {
                     backgroundImage: AssetImage('assets/profile.png'),
                     backgroundColor: Colors.white,
                   ),
-
-                  onDetailsPressed: _studentinfo,
                   accountName: Text(_accountName ?? ''),
                   accountEmail: Text(_accountEmail ?? ''),
 
@@ -123,7 +122,10 @@ class _MyDrawerState extends State<MyDrawer> {
                   leading: Icon(Icons.announcement, color: Colors.grey[800]),
                   title: Text('공지사항'),
                   onTap: () {
-                    // 메뉴 1을 클릭할 때의 동작을 정의합니다.
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Notice()),
+                    );
                   },
                 ),
                 ListTile(
