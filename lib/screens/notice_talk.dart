@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:capstone/screens/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -40,6 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
         centerTitle: true,
         backgroundColor: Color(0xffC1D3FF),
       ),
+      drawer: MyDrawer(),
       backgroundColor: Colors.white,//여기까진 고정
 
 

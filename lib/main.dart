@@ -1,4 +1,4 @@
-import 'package:capstone/screens/notice.dart';
+import 'package:capstone/screens/notice_talk.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Notice()),
+                  MaterialPageRoute(builder: (context) => Notice_Talk()),
                 );
               },
               child: Text(
