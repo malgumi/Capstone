@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:capstone/screens/profile.dart';
+import 'package:capstone/screens/drawer.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,15 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String _errorMessage = '';
   bool _isLoading = false;
 
-  void logout() async {
-    final storage = new FlutterSecureStorage();
-    await storage.delete(key: 'token');
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => MyHomePage()),
-      (Route<dynamic> route) => false,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => logout(),
-          ),
         ],
       ),
+      drawer: MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
