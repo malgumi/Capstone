@@ -4,6 +4,9 @@ import 'dart:convert';
 import 'package:capstone/screens/PostScreen.dart';
 import 'package:capstone/screens/WritePostScreen.dart';
 import 'package:intl/intl.dart';
+import 'package:capstone/screens/party_board.dart';
+import 'package:capstone/main.dart';
+
 
 void main() {
   runApp(MaterialApp(
@@ -174,6 +177,46 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
         centerTitle: true,
         elevation: 0.0,
       ),
+      drawer: Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          UserAccountsDrawerHeader(
+              currentAccountPicture: CircleAvatar(
+                // 현재 계정 이미지 set
+                backgroundImage: AssetImage('assets/profile.png'),
+                backgroundColor: Colors.white,
+              ),
+              accountName: Text('20190580'),
+              accountEmail: Text('20190580@gm.hannam.ac.kr')),
+          ListTile(
+            title: Text('홈'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
+            },
+          ),
+          ListTile(
+            title: Text('공지사항'),
+            onTap: () {
+              // 메뉴 1을 클릭할 때의 동작을 정의합니다.
+            },
+          ),
+          ListTile(
+            title: Text('구인구직 게시판'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PartyBoardScreen()));
+            },
+          ),
+          ListTile(
+            title: Text('자유게시판'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => FreeBoardScreen()));
+
+            },
+          ),
+        ],
+      ),
+    ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<List<dynamic>>(
