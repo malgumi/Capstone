@@ -25,18 +25,8 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-Future<List<dynamic>> fetchTalks() async {
-  final response = await http.get(Uri.parse('http://3.39.88.187:3000/notice_talk/write'));
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
-  } else {
-    throw Exception('Failed to load notice');
-  }
-}
-
-
 class _ChatScreenState extends State<ChatScreen> {
-  late Future<List<dynamic>> _talks;  //???
+  final List<Message> _messages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +47,16 @@ class _ChatScreenState extends State<ChatScreen> {
         children: <Widget>[
           Flexible(
             child: ListView.builder(
-              //itemCount: Message.length,
+              itemCount: _messages.length,
               reverse: true,  //최근글이 아래쪽으로 오도록
               itemBuilder: (BuildContext context, int index) {
-                final Message message = Message.fromJson(_talks[index]);
+                final Message message = _messages[index];
                 final bool isMe = message.sender == currentUser;
 
                 return _buildMessage(message, isMe);
               },
             ),
           ),
-
           Divider(height: 1.0),
           Container(
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
@@ -127,71 +116,71 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildMessage(Message message, bool isMe) {
     final Container msg = Container(
         margin: isMe
-        ? EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
-        left: 80.0,
+            ? EdgeInsets.only(
+          top: 8.0,
+          bottom: 8.0,
+          left: 80.0,
         )
-        : EdgeInsets.only(
-        top: 8.0,
-        bottom: 8.0,
+            : EdgeInsets.only(
+          top: 8.0,
+          bottom: 8.0,
         ),
         padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 15.0),
         decoration: BoxDecoration(
-        color: isMe ? Colors.blue[100] : Colors.grey[200],
-        borderRadius: isMe
-        ? BorderRadius.only(
-        topLeft: Radius.circular(15.0),
-        bottomLeft: Radius.circular(15.0),
-        )
-        : BorderRadius.only(
-        topRight: Radius.circular(15.0),
-        bottomRight: Radius.circular(15.0),
-        ),
+          color: isMe ? Colors.blue[100] : Colors.grey[200],
+          borderRadius: isMe
+              ? BorderRadius.only(
+            topLeft: Radius.circular(15.0),
+            bottomLeft: Radius.circular(15.0),
+          )
+              : BorderRadius.only(
+            topRight: Radius.circular(15.0),
+            bottomRight: Radius.circular(15.0),
+          ),
         ),
         child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-        Text(
-          message.sender,
-          style: TextStyle(
-            color: Colors.grey[800],
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 8.0),
-        Text(
-          message.text,
-          style: TextStyle(
-          color: Colors.grey[800],
-          fontSize: 16.0,
-          fontWeight: FontWeight.normal,
-          ),
-        ),
-        SizedBox(height: 8.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              message.time,
+              message.sender,
               style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14.0,
+                color: Colors.grey[800],
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              message.text,
+              style: TextStyle(
+                color: Colors.grey[800],
+                fontSize: 16.0,
                 fontWeight: FontWeight.normal,
               ),
             ),
-          message.isLiked
-              ? Icon(
-            Icons.favorite,
-            color: Colors.red,
-            size: 16.0,
-            )
-              : SizedBox.shrink(),
+            SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  message.time,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                message.isLiked
+                    ? Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                  size: 16.0,
+                )
+                    : SizedBox.shrink(),
+              ],
+            ),
           ],
-        ),
-    ],
-    ));
+        ));
 
     if (isMe) {
       return msg;
@@ -220,7 +209,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   final TextEditingController _textController = TextEditingController();
-  final String currentUser = notice_talk['name'];
+  final String currentUser = '내 이름';
 }
 
 class Message {
@@ -237,6 +226,4 @@ class Message {
     required this.isLiked,
     required this.unread,
   });
-
-  factory Message.fromJson
 }
