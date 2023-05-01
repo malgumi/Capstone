@@ -30,7 +30,7 @@ class _PostScreenState extends State<PostScreen> {
   //댓글 가져오기
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(Uri.parse(
-        'http://3.39.88.187:3000/post/comment:?post_id=${widget.post['post_id']}'));
+        'http://10.0.2.2:3000/post/comment:?post_id=${widget.post['post_id']}'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -40,7 +40,7 @@ class _PostScreenState extends State<PostScreen> {
 
   //댓글 입력
   Future<void> postComment(int postId, String content) async {
-    final url = Uri.parse('http://3.39.88.187:3000/post/commentwrite/${widget.post['post_id']}');
+    final url = Uri.parse('http://10.0.2.2:3000/post/commentwrite/${widget.post['post_id']}');
     setState(() => _isLoading = true);
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
@@ -79,7 +79,7 @@ class _PostScreenState extends State<PostScreen> {
 
   //댓글 삭제
   Future<void> _deleteComment(int commentId) async {
-    final url = Uri.parse('http://3.39.88.187:3000/post/deletecomment/$commentId');
+    final url = Uri.parse('http://10.0.2.2:3000/post/deletecomment/$commentId');
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
     print(token);
@@ -113,7 +113,7 @@ class _PostScreenState extends State<PostScreen> {
 
   //댓글 수정
   Future<void> _editComment(int commentId, String content) async {
-    final url = Uri.parse('http://3.39.88.187:3000/post/editcomment/$commentId');
+    final url = Uri.parse('http://10.0.2.2:3000/post/updatecomment/$commentId');
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
     if (token == null) {
@@ -123,7 +123,7 @@ class _PostScreenState extends State<PostScreen> {
       });
       return;
     }
-    final response = await http.put(
+    final response = await http.post(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -146,6 +146,7 @@ class _PostScreenState extends State<PostScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 수정에 실패했습니다.')));
     }
   }
+
 
 //댓글 수정 폼
   void _showEditCommentForm(int commentId, String originalContent) {
@@ -244,7 +245,7 @@ class _PostScreenState extends State<PostScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('http://3.39.88.187:3000/post/deletepost/${widget.post['post_id']}'),
+      Uri.parse('http://10.0.2.2:3000/post/deletepost/${widget.post['post_id']}'),
       headers: <String, String>{ //헤더파일 추가
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -390,7 +391,7 @@ class _PostScreenState extends State<PostScreen> {
                                       icon: Icon(Icons.edit_outlined),
                                       iconSize: 18,
                                       color: Colors.grey,
-                                      onPressed: () => _editComment(snapshot.data![index]['comment_id'], snapshot.data![index]['comment_content']),
+                                      onPressed: () => _showEditCommentForm(snapshot.data![index]['comment_id'], snapshot.data![index]['comment_content']),
                                     ),
                                     IconButton(
                                       icon: Icon(Icons.cancel_outlined),
@@ -415,6 +416,7 @@ class _PostScreenState extends State<PostScreen> {
                           );
                         },
                       ),
+
                     );
                   }
                 } else if (snapshot.hasError) {

@@ -58,7 +58,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
 
     final response = await http.get(
-      Uri.parse('http://3.39.88.187:3000/user/student'),
+      Uri.parse('http://10.0.2.2:3000/user/student'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
