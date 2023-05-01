@@ -28,8 +28,24 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final List<Message> _messages = [];
+  late Future<List<dynamic>> _notices;
 
   @override
+  void initState() {//게시글 목록을 가져옴
+    super.initState();
+    _notices = _fetchNotices();
+  }
+//서버로부터 게시글 목록을 가져옴
+  Future<List<dynamic>> _fetchNotices() async {
+    final response = await http
+        .get(Uri.parse('http://3.39.88.187:3000/notice/notices?board_id=1'));
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load notices');
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
