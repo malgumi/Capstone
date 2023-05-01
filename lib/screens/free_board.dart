@@ -30,7 +30,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
 
   Future<List<dynamic>> _fetchPosts() async {
     final response = await http
-        .get(Uri.parse('http://10.0.2.2:3000/post/posts?board_id=1'));
+        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=1'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -41,7 +41,7 @@ class _FreeBoardScreenState extends State<FreeBoardScreen> {
   //댓글 갯수 표시 기능 구현중
   Future _fetchCommentsCount() async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3000/post/commentsAll'),
+      Uri.parse('http://3.39.88.187:3000/post/commentsAll'),
     );
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
