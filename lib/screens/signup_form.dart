@@ -252,6 +252,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         _showGradeSelectionDialog();
                       },
                       child: Text('선택'),
+
                     ),
 
                   ],
