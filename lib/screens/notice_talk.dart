@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -7,38 +8,31 @@ import 'package:capstone/screens/drawer.dart';
 void main() {
   runApp(MaterialApp(
     title: '전체 공지방',
-    home: Notice_Talk(),
+    home: NoticeTalkScreen(),
   ));
 }
 
-class Notice_Talk extends StatelessWidget {
+class NoticeTalkScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Notice_talk',
-      home: ChatScreen(),
-    );
-  }
+  _NoticeTalkScreenState createState() => _NoticeTalkScreenState();
 }
 
-class ChatScreen extends StatefulWidget {
-  @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
-  final List<Message> _messages = [];
+class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
+  //final List<Message> _messages = [];
   late Future<List<dynamic>> _notices;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _errorMessage = '';
+  bool _isLoading = false;
 
   @override
   void initState() {//게시글 목록을 가져옴
     super.initState();
-    _notices = _fetchNotices();
+    _notices = fetchNotices();
   }
 //서버로부터 게시글 목록을 가져옴
-  Future<List<dynamic>> _fetchNotices() async {
+  Future<List<dynamic>> fetchNotices() async {
     final response = await http
-        .get(Uri.parse('http://3.39.88.187:3000/notice/notices?board_id=1'));
+        .get(Uri.parse('http://3.39.88.187:3000/notice/notices?board_id=3'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -46,6 +40,71 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Widget _buildNoticeItem(BuildContext context, dynamic notice) {
+    return GestureDetector(
+      // onTap: () async {
+      //   await Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => NoticeTalkScreen(notice: notice),
+      //     ),
+      //   );
+      //   setState(() {
+      //     _notices = _fetchNotices();
+      //   });
+      // },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.0),
+            color: Colors.white,
+            border: Border.all(
+              width: 2,
+              color: Colors.grey.withOpacity(0.5),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                notice['notice_content'],
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    notice['student_id'].toString().substring(2, 4) + '학번',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('yyyy-MM-dd HH:mm:ss')
+                        .format(DateTime.parse(notice['notice_date'])),
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey,
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -60,31 +119,103 @@ class _ChatScreenState extends State<ChatScreen> {
       drawer: MyDrawer(),
       backgroundColor: Colors.white,//여기까진 고정
 
-
       body: Column(
-        children: <Widget>[
-          Flexible(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              reverse: true,  //최근글이 아래쪽으로 오도록
-              itemBuilder: (BuildContext context, int index) {
-                final Message message = _messages[index];
-                final bool isMe = message.sender == currentUser;
-
-                return _buildMessage(message, isMe);
-              },
-            ),
+        children: [
+          FutureBuilder<List<dynamic>>(
+            future: _notices,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final notices = snapshot.data!;
+                return ListView.builder(
+                  itemCount: notices.length,
+                  reverse: true,
+                  itemBuilder: (context, index) {
+                    return _buildNoticeItem(context, notices[index]);
+                  },
+                );
+              }
+              else if (snapshot.hasError) {
+                return Center(
+                  child: Text('${snapshot.error}'),
+                );
+              }
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            },
           ),
-          Divider(height: 1.0),
           Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _buildTextComposer(),
-          ),
+            child: _buildTextComposer(),//메시지 입력창
+          )
         ],
-      ),
+      )
+        //padding: const EdgeInsets.all(16.0),
+
+
+
+      // body: Column(
+      //   children: <Widget>[
+      //     Flexible(
+      //       child: ListView.builder(
+      //         itemCount: notices.length,
+      //         reverse: true,  //최근글이 아래쪽으로 오도록
+      //         itemBuilder: (BuildContext context, int index) {
+      //           //final Message message = _messages[index];
+      //           //final bool isMe = message.sender == currentUser;
+      //
+      //           return Notice(_notices, isMe);
+      //         },
+      //       ),
+      //     ),
+      //     Divider(height: 1.0),
+      //     Container(
+      //       decoration: BoxDecoration(color: Theme.of(context).cardColor),
+      //       child: _buildTextComposer(),
+      //     ),
+      //   ],
+      // ),
+
     );
   }
-
+  
+//공지 입력
+  Future<void> notice(String content) async {
+    final url = Uri.parse('http://3.39.88.187:3000/notice/notices?board_id=3');
+    setState(() => _isLoading = true);
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('공지 입력에 실패했습니다.(로그인 만료)')));
+      });
+      return;
+    }
+    final response = await http.post(
+      url,
+      headers: <String, String>{ //헤더파일 추가
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+      body: jsonEncode( {
+        'comment_content': content,
+      }),
+    );
+    if (response.statusCode == 201) {
+      // 입력 성공 처리
+      // 예시:
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('공지가 성공적으로 입력되었습니다.')));
+      _textController.clear(); // 댓글 입력 완료 후, TextField를 초기화합니다.
+      setState(() {
+        _notices = fetchNotices(); // 댓글 리스트를 다시 불러옵니다.
+      });
+    } else {
+      // 실패 처리
+      // 예시:
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('공지 입력에 실패했습니다.')));
+    }
+  }
   Widget _buildTextComposer() {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).accentColor),
@@ -126,7 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
         isLiked: false,
         unread: true,
       );
-      _messages.insert(0, message);
+      //_notices.insert(0, message);
     });
   }
 

@@ -1,4 +1,4 @@
-import 'package:capstone/screens/notice_talk.dart';
+import 'package:capstone/screens/notice.dart';
 import 'package:firebase_core/firebase_core.dart'; //firebase기능 이용위함
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Notice_Talk()),
+                  MaterialPageRoute(builder: (context) => Notice()),
                 );
               },
               child: Text(
