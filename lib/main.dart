@@ -1,4 +1,5 @@
 import 'package:capstone/screens/notice_talk.dart';
+import 'package:firebase_core/firebase_core.dart'; //firebase기능 이용위함
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
@@ -9,7 +10,12 @@ import 'dart:convert';
 import 'package:capstone/screens/profile.dart';
 import 'package:capstone/screens/drawer.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+
+  );
   runApp(MyApp());
 }
 
