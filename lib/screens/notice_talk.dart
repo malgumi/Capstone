@@ -13,6 +13,10 @@ void main() {
 }
 
 class NoticeTalkScreen extends StatefulWidget {
+  final int boardId;
+
+  NoticeTalkScreen({required this.boardId});
+
   @override
   _NoticeTalkScreenState createState() => _NoticeTalkScreenState();
 }
@@ -21,13 +25,45 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
   //final List<Message> _messages = [];
   late Future<List<dynamic>> _notices;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  TextEditingController _contentController = TextEditingController();
+
   String _errorMessage = '';
   bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _contentController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {//게시글 목록을 가져옴
     super.initState();
     _notices = fetchNotices();
+  }
+
+  void _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null){
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('공지 작성에 실패했습니다. (로그인 만료)')));
+      });
+      return;
+    }
+
+    final Map<String, dynamic> noticeData = {
+      'board_id': widget.boardId,
+      'notice_content': _contentController.text,
+      'notice_file': 'null',
+    }
   }
 //서버로부터 게시글 목록을 가져옴
   Future<List<dynamic>> fetchNotices() async {
@@ -50,7 +86,7 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
       //     ),
       //   );
       //   setState(() {
-      //     _notices = _fetchNotices();
+      //     _notices = fetchNotices();
       //   });
       // },
       child: Padding(
