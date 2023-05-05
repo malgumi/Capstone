@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/drawer.dart';
+//import 'package:jwt_decoder/jwt_decoder.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -67,15 +68,30 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
 //서버로부터 게시글 목록을 가져옴
   Future<List<dynamic>> fetchNotices() async {
     final response = await http
-        .get(Uri.parse('http://3.39.88.187:3000/notice/notices?board_id=3'));
+        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3'));
+
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final List<dynamic> notice = jsonDecode(response.body);
+      //final token = jwtDecode(getToken());
+
+      // return notices.map((notice) {
+      //   return {
+      //     'post_id': notice['post_id'],
+      //     'post_content': notice['post_content'],
+      //     'post_date': notice['post_date'],
+      //     'permission': token['permission'],//토큰에서 권한추출
+      //   };
+      // }).toList();
+
+      return notice;
+
+      //return jsonDecode(response.body);
     }
     else {
       throw Exception('Failed to load notices');
     }
   }
-
+//, dynamic token
   Widget _buildNoticeItem(BuildContext context, dynamic notice) {
     return GestureDetector(
       // onTap: () async {
@@ -105,7 +121,7 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                notice['notice_content'],
+                notice['post_content'],
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
@@ -116,6 +132,7 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    //token.permission == 2 ? '조교님' : token.permission == 3 ? '교수님' : '',
                     notice['student_id'].toString().substring(2, 4) + '학번',
                     style: TextStyle(
                       fontSize: 14.0,
@@ -124,7 +141,7 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
                   ),
                   Text(
                     DateFormat('yyyy-MM-dd HH:mm:ss')
-                        .format(DateTime.parse(notice['notice_date'])),
+                        .format(DateTime.parse(notice['post_date'])),
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,
@@ -155,37 +172,40 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
       drawer: MyDrawer(),
       backgroundColor: Colors.white,//여기까진 고정
 
-      body: Column(
-        children: [
-          FutureBuilder<List<dynamic>>(
-            future: _notices,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final notices = snapshot.data!;
-                return ListView.builder(
-                  itemCount: notices.length,
-                  reverse: true,
-                  itemBuilder: (context, index) {
-                    return _buildNoticeItem(context, notices[index]);
-                  },
-                );
-              }
-              else if (snapshot.hasError) {
-                return Center(
-                  child: Text('${snapshot.error}'),
-                );
-              }
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
-          Container(
-            child: _buildTextComposer(),//메시지 입력창
-          )
-        ],
-      )
-        //padding: const EdgeInsets.all(16.0),
+        body: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<dynamic>>(
+                future: _notices,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final notices = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: notices.length,
+                      reverse: true,
+                      itemBuilder: (context, index) {
+                        return _buildNoticeItem(context, notices[index]);//, token
+                      },
+                    );
+                  }
+                  else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+            Container(
+              child: _buildTextComposer(),//메시지 입력창
+            )
+          ],
+        )
+
+      //padding: const EdgeInsets.all(16.0),
 
 
 
@@ -247,7 +267,7 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
 //   }
 
   Future<void> notice(String content) async {
-    final url = Uri.parse('http://3.39.88.187:3000/notice/notices?board_id=3');
+    final url = Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3');
     setState(() => _isLoading = true);
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
@@ -259,6 +279,12 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
       });
       return;
     }
+
+    final Map<String, dynamic> noticeData = {
+      'board_id': widget.boardId,
+      'post_content': _contentController.text,
+      'post_file': 'null', // TODO: Implement file uploading
+    };
     final response = await http.post(
       url,
       headers: <String, String>{ //헤더파일 추가
@@ -314,19 +340,36 @@ class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
   }
 
 
-  void _handleSubmitted(String text) {
-    _textController.clear(); // TextField 내용 지우기
-    setState(() {
-      final message = Message(
-        text: text,
-        sender: currentUser,
-        time: DateFormat('yyyy-MM-dd kk:mm:ss').format(DateTime.now()),
-        isLiked: false,
-        unread: true,
+  Future<void> _handleSubmitted(String text) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'comment_content': text,
+        }),
       );
-      //_notices.insert(0, message);
-    });
+      if (response.statusCode == 201) {
+        // 성공적으로 저장된 경우
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('데이터가 저장되었습니다.')),
+        );
+      } else {
+        // 저장에 실패한 경우
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('데이터 저장에 실패했습니다.')),
+        );
+      }
+    } catch (error) {
+      // 에러가 발생한 경우
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('오류가 발생했습니다: $error')),
+      );
+    }
   }
+
 
 
   Widget _buildMessage(Message message, bool isMe) {
