@@ -4,6 +4,7 @@ import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/login_form.dart';
+import 'package:capstone/screens/QnA_board.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/notice.dart';
@@ -118,16 +119,16 @@ class _MyDrawerState extends State<MyDrawer> {
                     );
                   },
                 ),
-                ListTile(
-                  leading: Icon(Icons.announcement, color: Colors.grey[800]),
-                  title: Text('공지사항'),
-                  onTap: () {
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Notice()),
-                    );
-                  },
-                ),
+                // ListTile(
+                //   leading: Icon(Icons.announcement, color: Colors.grey[800]),
+                //   title: Text('공지사항'),
+                //   onTap: () {
+                //     Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => Notice()),
+                //     );
+                //   },
+                // ),
                 ListTile(
                   leading: Icon(Icons.chat, color: Colors.grey[800]),
                   title: Text('구인구직 게시판'),
@@ -147,6 +148,17 @@ class _MyDrawerState extends State<MyDrawer> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => FreeBoardScreen()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.article, color: Colors.grey[800]),
+                  title: Text('Q&A게시판'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => QnABoardScreen()),
                     );
                   },
                 ),

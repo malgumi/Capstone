@@ -1,5 +1,5 @@
 import 'package:capstone/screens/notice.dart';
-import 'package:firebase_core/firebase_core.dart'; //firebase기능 이용위함
+//import 'package:firebase_core/firebase_core.dart'; //firebase기능 이용위함
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
@@ -13,9 +13,9 @@ import 'package:capstone/screens/drawer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-
-  );
+  // await Firebase.initializeApp(
+  //
+  // );
   runApp(MyApp());
 }
 
@@ -68,22 +68,22 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Notice()),
-                );
-              },
-              child: Text(
-                '공지 알림톡',
-                style: TextStyle(fontSize: 20),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 20.0),
-                backgroundColor: Color(0xffC1D3FF),
-              ),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => Notice()),
+            //     );
+            //   },
+            //   child: Text(
+            //     '공지 알림톡',
+            //     style: TextStyle(fontSize: 20),
+            //   ),
+            //   style: ElevatedButton.styleFrom(
+            //     padding: EdgeInsets.symmetric(vertical: 20.0),
+            //     backgroundColor: Color(0xffC1D3FF),
+            //   ),
+            // ),
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
