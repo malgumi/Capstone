@@ -119,16 +119,16 @@ class _MyDrawerState extends State<MyDrawer> {
                     );
                   },
                 ),
-                // ListTile(
-                //   leading: Icon(Icons.announcement, color: Colors.grey[800]),
-                //   title: Text('공지사항'),
-                //   onTap: () {
-                //     Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => Notice()),
-                //     );
-                //   },
-                // ),
+                ListTile(
+                  leading: Icon(Icons.announcement, color: Colors.grey[800]),
+                  title: Text('공지사항'),
+                  onTap: () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Notice()),
+                    );
+                  },
+                ),
                 ListTile(
                   leading: Icon(Icons.chat, color: Colors.grey[800]),
                   title: Text('구인구직 게시판'),

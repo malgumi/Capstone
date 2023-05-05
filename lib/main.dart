@@ -68,22 +68,22 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => Notice()),
-            //     );
-            //   },
-            //   child: Text(
-            //     '공지 알림톡',
-            //     style: TextStyle(fontSize: 20),
-            //   ),
-            //   style: ElevatedButton.styleFrom(
-            //     padding: EdgeInsets.symmetric(vertical: 20.0),
-            //     backgroundColor: Color(0xffC1D3FF),
-            //   ),
-            // ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Notice()),
+                );
+              },
+              child: Text(
+                '공지 알림톡',
+                style: TextStyle(fontSize: 20),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+                backgroundColor: Color(0xffC1D3FF),
+              ),
+            ),
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
