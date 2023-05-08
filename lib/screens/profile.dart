@@ -276,7 +276,7 @@ class _TopPortionState extends State<_TopPortion> {
     final bytes = await image.readAsBytes();
 
     final request =
-    http.MultipartRequest('POST', Uri.parse('http://localhost:3000/user/upload'));
+    http.MultipartRequest('POST', Uri.parse('http://3.39.88.187:3000/user/upload'));
     request.files.add(http.MultipartFile.fromBytes('image', bytes, filename: fileName));
     final response = await request.send();
 
@@ -288,7 +288,7 @@ class _TopPortionState extends State<_TopPortion> {
       // 이미지 업로드가 완료되면 서버에서 이미지를 다시 읽어서 화면에 표시
       // final String fileName = _accountId! + '.png';
       // final imageUrl =
-      //     'http://localhost:3000/user/loding?image=$fileName'; // 이미지 URL
+      //     'http://3.39.88.187:3000/user/loding?image=$fileName'; // 이미지 URL
       // final imageResponse = await http.get(Uri.parse(imageUrl));
       // Uint8List? _imageData;
       // if (imageResponse.statusCode == 200) {
@@ -335,7 +335,7 @@ class _TopPortionState extends State<_TopPortion> {
               fit: StackFit.expand,
               children: [
                 Image.network(
-                  'http://localhost:3000/user/loding?image=$fileName',
+                  'http://3.39.88.187:3000/user/loding?image=$fileName',
                   fit: BoxFit.cover,
                   errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                     return Image.asset(
@@ -530,7 +530,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
               // Send password change request
               final response = await http.put(
-                Uri.parse('http://localhost:3000/user/password'),
+                Uri.parse('http://3.39.88.187:3000/user/password'),
                 headers: <String, String>{
                   'Content-Type': 'application/json; charset=UTF-8',
                   'Authorization': token

@@ -108,7 +108,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   ),
                   currentAccountPicture: CircleAvatar(
                     backgroundImage: Image.network(
-                      'http://localhost:3000/user/loding?image=$fileName',
+                      'http://3.39.88.187:3000/user/loding?image=$fileName',
                       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                         return Image.asset(
                           'assets/profile.png',
