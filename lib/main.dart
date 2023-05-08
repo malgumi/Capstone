@@ -1,5 +1,5 @@
-import 'package:capstone/screens/notice_talk.dart';
-import 'package:firebase_core/firebase_core.dart'; //firebase기능 이용위함
+import 'package:capstone/screens/notice.dart';
+//import 'package:firebase_core/firebase_core.dart'; //firebase기능 이용위함
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
@@ -12,7 +12,7 @@ import 'package:capstone/screens/drawer.dart';
 
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(
   //
   // );
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Notice_Talk()),
+                  MaterialPageRoute(builder: (context) => Notice()),
                 );
               },
               child: Text(

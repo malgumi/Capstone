@@ -1,10 +1,10 @@
-import 'package:capstone/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/main.dart';
 import 'package:capstone/screens/party_board.dart';
 import 'package:capstone/screens/free_board.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/login_form.dart';
+import 'package:capstone/screens/QnA_board.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/notice.dart';
@@ -90,10 +90,6 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    if (_accountName == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-    final String fileName = _accountName! + '.png';
     return Drawer(
       child: Column(
         children: [
@@ -106,15 +102,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     color: Color(0xffC1D3FF),
                   ),
                   currentAccountPicture: CircleAvatar(
-                    backgroundImage: Image.network(
-                      'http://localhost:3000/user/loding?image=$fileName',
-                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                        return Image.asset(
-                          'assets/profile.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ).image,
+                    backgroundImage: AssetImage('assets/profile.png'),
                     backgroundColor: Colors.white,
                   ),
                   accountName: Text(_accountName ?? ''),
@@ -164,14 +152,19 @@ class _MyDrawerState extends State<MyDrawer> {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.person, color: Colors.grey[800]),
-                  title: Text('프로필'),
-                  onTap: (){
+                  leading: Icon(Icons.article, color: Colors.grey[800]),
+                  title: Text('Q&A게시판'),
+                  onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Profile()),
+                      MaterialPageRoute(
+                          builder: (context) => QnABoardScreen()),
                     );
-                  }
+                  },
+                ),
+                ListTile(
+                  title: Text('내 정보 업데이트'),
+                  onTap: _studentinfo,
                 ),
 
               ],

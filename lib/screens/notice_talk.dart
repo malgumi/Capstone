@@ -1,35 +1,163 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/drawer.dart';
+//import 'package:jwt_decoder/jwt_decoder.dart';
 
 void main() {
   runApp(MaterialApp(
     title: '전체 공지방',
-    home: Notice_Talk(),
+    home: NoticeTalkScreen(boardId: 3),
   ));
 }
 
-class Notice_Talk extends StatelessWidget {
+class NoticeTalkScreen extends StatefulWidget {
+  final int boardId;
+
+  NoticeTalkScreen({required this.boardId});
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Notice_talk',
-      home: ChatScreen(),
+  _NoticeTalkScreenState createState() => _NoticeTalkScreenState();
+}
+
+class _NoticeTalkScreenState extends State<NoticeTalkScreen> {
+  late Future<List<dynamic>> _notices;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  TextEditingController _contentController = TextEditingController();
+
+  String _errorMessage = '';
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {//게시글 목록을 가져옴
+    super.initState();
+    _notices = fetchNotices();
+  }
+
+  void _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null){
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('공지 작성에 실패했습니다. (로그인 만료)')));
+      });
+      return;
+    }
+
+    final Map<String, dynamic> noticeData = {
+      'board_id': widget.boardId,
+      'notice_content': _contentController.text,
+      'notice_file': 'null',
+    };
+  }
+//서버로부터 게시글 목록을 가져옴
+  Future<List<dynamic>> fetchNotices() async {
+    final response = await http
+        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> notice = jsonDecode(response.body);
+      //final token = jwtDecode(getToken());
+
+      // return notices.map((notice) {
+      //   return {
+      //     'post_id': notice['post_id'],
+      //     'post_content': notice['post_content'],
+      //     'post_date': notice['post_date'],
+      //     'permission': token['permission'],//토큰에서 권한추출
+      //   };
+      // }).toList();
+
+      return notice;
+
+      //return jsonDecode(response.body);
+    }
+    else {
+      throw Exception('Failed to load notices');
+    }
+  }
+//, dynamic token
+  Widget _buildNoticeItem(BuildContext context, dynamic notice) {
+    return GestureDetector(
+      // onTap: () async {
+      //   await Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => NoticeTalkScreen(notice: notice),
+      //     ),
+      //   );
+      //   setState(() {
+      //     _notices = fetchNotices();
+      //   });
+      // },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.0),
+            color: Colors.white,
+            border: Border.all(
+              width: 2,
+              color: Colors.grey.withOpacity(0.5),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                notice['post_content'],
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    //token.permission == 2 ? '조교님' : token.permission == 3 ? '교수님' : '',
+                    notice['student_id'].toString().substring(2, 4) + '학번',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('yyyy-MM-dd HH:mm:ss')
+                        .format(DateTime.parse(notice['post_date'])),
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.grey,
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
-}
 
-class ChatScreen extends StatefulWidget {
-  @override
-  _ChatScreenState createState() => _ChatScreenState();
-}
 
-class _ChatScreenState extends State<ChatScreen> {
-  final List<Message> _messages = [];
-
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,31 +172,143 @@ class _ChatScreenState extends State<ChatScreen> {
       drawer: MyDrawer(),
       backgroundColor: Colors.white,//여기까진 고정
 
-
-      body: Column(
-        children: <Widget>[
-          Flexible(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              reverse: true,  //최근글이 아래쪽으로 오도록
-              itemBuilder: (BuildContext context, int index) {
-                final Message message = _messages[index];
-                final bool isMe = message.sender == currentUser;
-
-                return _buildMessage(message, isMe);
-              },
+        body: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<dynamic>>(
+                future: _notices,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final notices = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: notices.length,
+                      reverse: true,
+                      itemBuilder: (context, index) {
+                        return _buildNoticeItem(context, notices[index]);//, token
+                      },
+                    );
+                  }
+                  else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             ),
-          ),
-          Divider(height: 1.0),
-          Container(
-            decoration: BoxDecoration(color: Theme.of(context).cardColor),
-            child: _buildTextComposer(),
-          ),
-        ],
-      ),
+            Container(
+              child: _buildTextComposer(),//메시지 입력창
+            )
+          ],
+        )
+
+      //padding: const EdgeInsets.all(16.0),
+
+
+
+      // body: Column(
+      //   children: <Widget>[
+      //     Flexible(
+      //       child: ListView.builder(
+      //         itemCount: notices.length,
+      //         reverse: true,  //최근글이 아래쪽으로 오도록
+      //         itemBuilder: (BuildContext context, int index) {
+      //           //final Message message = _messages[index];
+      //           //final bool isMe = message.sender == currentUser;
+      //
+      //           return Notice(_notices, isMe);
+      //         },
+      //       ),
+      //     ),
+      //     Divider(height: 1.0),
+      //     Container(
+      //       decoration: BoxDecoration(color: Theme.of(context).cardColor),
+      //       child: _buildTextComposer(),
+      //     ),
+      //   ],
+      // ),
+
     );
   }
 
+//공지 입력
+//   class Notice {
+//     int? student_id;
+//     int? notice_id;
+//     int? permission;
+//     String? notice_content;
+//     String? notice_date;
+//     bool? completed;
+//
+//     Notice({this.student_id, this.notice_id, this.permission, this.notice_content, this.notice_date, this.completed});
+//
+//     Notice.fromJson(Map<String, dynamic>json) {
+//       student_id = json['student_id'];
+//       notice_id = json['notice_id'];
+//       permission = json['permission'];
+//       notice_content = json['notice_content'];
+//       notice_date = json['notice_date'];
+//       completed = json['completed'];
+//     }
+//
+//     Map<String, dynamic>to Json() {
+//       final Map<String, dynamic> data = new Map<String, dynamic>();
+//       data['student_id'] = this.student_id;
+//       data['notice_id'] = this.notice_id;
+//       data['permission'] = this.permission;
+//       data['notice_content'] = this.notice_content;
+//       data['notice_date'] = this.notice_date;
+//       data['completed'] = this.completed;
+//       return data;
+//     }
+//   }
+
+  Future<void> notice(String content) async {
+    final url = Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3');
+    setState(() => _isLoading = true);
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('공지 입력에 실패했습니다.(로그인 만료)')));
+      });
+      return;
+    }
+
+    final Map<String, dynamic> noticeData = {
+      'board_id': widget.boardId,
+      'post_content': _contentController.text,
+      'post_file': 'null', // TODO: Implement file uploading
+    };
+    final response = await http.post(
+      url,
+      headers: <String, String>{ //헤더파일 추가
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+      body: jsonEncode( {
+        'comment_content': content,
+      }),
+    );
+    if (response.statusCode == 201) {
+      // 입력 성공 처리
+      // 예시:
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('공지가 성공적으로 입력되었습니다.')));
+      _textController.clear(); // 댓글 입력 완료 후, TextField를 초기화합니다.
+      setState(() {
+        _notices = fetchNotices(); // 댓글 리스트를 다시 불러옵니다.
+      });
+    } else {
+      // 실패 처리
+      // 예시:
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('공지 입력에 실패했습니다.')));
+    }
+  }
   Widget _buildTextComposer() {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).accentColor),
@@ -100,19 +340,36 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
 
-  void _handleSubmitted(String text) {
-    _textController.clear(); // TextField 내용 지우기
-    setState(() {
-      final message = Message(
-        text: text,
-        sender: currentUser,
-        time: DateFormat('yyyy-MM-dd kk:mm:ss').format(DateTime.now()),
-        isLiked: false,
-        unread: true,
+  Future<void> _handleSubmitted(String text) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'comment_content': text,
+        }),
       );
-      _messages.insert(0, message);
-    });
+      if (response.statusCode == 201) {
+        // 성공적으로 저장된 경우
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('데이터가 저장되었습니다.')),
+        );
+      } else {
+        // 저장에 실패한 경우
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('데이터 저장에 실패했습니다.')),
+        );
+      }
+    } catch (error) {
+      // 에러가 발생한 경우
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('오류가 발생했습니다: $error')),
+      );
+    }
   }
+
 
 
   Widget _buildMessage(Message message, bool isMe) {

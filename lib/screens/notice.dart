@@ -1,3 +1,4 @@
+import 'package:capstone/screens/notice_talk.dart';
 import "package:flutter/material.dart";
 import 'package:capstone/screens/drawer.dart';
 
@@ -33,7 +34,7 @@ class Notice extends StatelessWidget {
               height: 90.0,
               child: Center(
                 child: Text(
-                  '공지사항',
+                  '공 지 사 항',
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
@@ -48,116 +49,105 @@ class Notice extends StatelessWidget {
                 border: Border.all(color: Colors.black, width: 0.3),
               ),
             ),
+            //여기까지 공지사항 윗박스
 
-            Expanded(
-              child: Container(
-                child: Center(
-                  child: Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          //color: Colors.lightBlue,
-                          height: 70,
-                          width: double.infinity,
-                          margin: EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Color(0xffE6E6E6)
-                              )
-                            )
-                          ),
-                          child: Text(
-                            '전체 공지',
-                            style: TextStyle(
-                              fontSize: 30,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Container(
-                          //color: Colors.lightBlue,
-                          height: 70,
-                          width: double.infinity,
-                          margin: EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Color(0xffE6E6E6)
-                                  )
-                              )
-                          ),
-                          child: Text(
-                            '1학년 공지',
-                            style: TextStyle(
-                              fontSize: 30,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Container(
-                          //color: Colors.lightBlue,
-                          height: 70,
-                          width: double.infinity,
-                          margin: EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Color(0xffE6E6E6)
-                                  )
-                              )
-                          ),
-                          child: Text(
-                            '2학년 공지',
-                            style: TextStyle(
-                              fontSize: 30,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Container(
-                          //color: Colors.lightBlue,
-                          height: 70,
-                          width: double.infinity,
-                          margin: EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Color(0xffE6E6E6)
-                                  )
-                              )
-                          ),
-                          child: Text(
-                            '3학년 공지',
-                            style: TextStyle(
-                              fontSize: 30,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),Container(
-                          //color: Colors.lightBlue,
-                          height: 70,
-                          width: double.infinity,
-                          margin: EdgeInsets.all(10.0),
-                          child: Text(
-                            '4학년 공지',
-                            style: TextStyle(
-                              fontSize: 30,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NoticeTalkScreen(boardId: 3)),
+                      );
+                    },
+                    child: Text(
+                      '전체공지',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 20.0),
+                      backgroundColor: Color(0xffC1D3FF),
                     ),
                   ),
-                ),
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                padding: EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(color: Colors.black, width: 0.3),
-                ),
+                  SizedBox(height: 20.0),
+
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => NoticeTalkScreen()),//여기수정
+                  //     );
+                  //   },
+                  //   child: Text(
+                  //     '1학년 공지',
+                  //     style: TextStyle(fontSize: 20),
+                  //   ),
+                  //   style: ElevatedButton.styleFrom(
+                  //     padding: EdgeInsets.symmetric(vertical: 20.0),
+                  //     backgroundColor: Color(0xffC1D3FF),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 20.0),
+                  //
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => NoticeTalkScreen()),//여기수정
+                  //     );
+                  //   },
+                  //   child: Text(
+                  //     '2학년 공지',
+                  //     style: TextStyle(fontSize: 20),
+                  //   ),
+                  //   style: ElevatedButton.styleFrom(
+                  //     padding: EdgeInsets.symmetric(vertical: 20.0),
+                  //     backgroundColor: Color(0xffC1D3FF),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 20.0),
+                  //
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => NoticeTalkScreen()),//여기수정
+                  //     );
+                  //   },
+                  //   child: Text(
+                  //     '3학년 공지',
+                  //     style: TextStyle(fontSize: 20),
+                  //   ),
+                  //   style: ElevatedButton.styleFrom(
+                  //     padding: EdgeInsets.symmetric(vertical: 20.0),
+                  //     backgroundColor: Color(0xffC1D3FF),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 20.0),
+                  //
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => NoticeTalkScreen()),//여기수정
+                  //     );
+                  //   },
+                  //   child: Text(
+                  //     '4학년 공지',
+                  //     style: TextStyle(fontSize: 20),
+                  //   ),
+                  //   style: ElevatedButton.styleFrom(
+                  //     padding: EdgeInsets.symmetric(vertical: 20.0),
+                  //     backgroundColor: Color(0xffC1D3FF),
+                  //   ),
+                  // ),
+                  SizedBox(height: 20.0),
+                ],
               ),
             ),
 
