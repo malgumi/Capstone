@@ -12,10 +12,10 @@ import 'package:capstone/screens/drawer.dart';
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-
-  );
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+  //
+  // );
   runApp(MyApp());
 }
 
