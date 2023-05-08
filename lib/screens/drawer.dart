@@ -1,3 +1,4 @@
+import 'package:capstone/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/main.dart';
 import 'package:capstone/screens/party_board.dart';
@@ -90,6 +91,10 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    if (_accountName == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+    final String fileName = _accountName! + '.png';
     return Drawer(
       child: Column(
         children: [
@@ -102,7 +107,15 @@ class _MyDrawerState extends State<MyDrawer> {
                     color: Color(0xffC1D3FF),
                   ),
                   currentAccountPicture: CircleAvatar(
-                    backgroundImage: AssetImage('assets/profile.png'),
+                    backgroundImage: Image.network(
+                      'http://localhost:3000/user/loding?image=$fileName',
+                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                        return Image.asset(
+                          'assets/profile.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ).image,
                     backgroundColor: Colors.white,
                   ),
                   accountName: Text(_accountName ?? ''),
@@ -163,8 +176,14 @@ class _MyDrawerState extends State<MyDrawer> {
                   },
                 ),
                 ListTile(
-                  title: Text('내 정보 업데이트'),
-                  onTap: _studentinfo,
+                    leading: Icon(Icons.person, color: Colors.grey[800]),
+                    title: Text('프로필'),
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Profile()),
+                      );
+                    }
                 ),
 
               ],
