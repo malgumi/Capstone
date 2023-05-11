@@ -43,17 +43,17 @@ class _MyPostState extends State<MyPost> {
     }
 
     final response = await http.get(
-      Uri.parse('http://localhost:3000/post/mypost'),
+      Uri.parse('http://3.39.88.187:3000/post/mypost'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
       },
     );
-    print(jsonDecode(response.body));
+
     if (response.statusCode == 201) {
       return jsonDecode(response.body);
     } else {
-      print(jsonDecode(response.body));
+
       throw Exception('Failed to load posts');
     }
   }
