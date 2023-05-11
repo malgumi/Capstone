@@ -1,3 +1,4 @@
+import 'package:capstone/screens/mypost.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -102,6 +103,7 @@ class _ProfileState extends State<Profile> {
                     Text(
                       "졸업 과제 중인데 Node.js로 백엔드 만들고 있습니다.",
                       style: TextStyle(color: Colors.grey),
+
                     ),
 
                   const SizedBox(height: 16),
@@ -125,7 +127,13 @@ class _ProfileState extends State<Profile> {
                       ),
                       const SizedBox(width: 16.0),
                       FloatingActionButton.extended(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyPost()),
+                          );
+                        },
                         heroTag: 'mesage',
                         elevation: 0,
                         backgroundColor: Colors.red,
@@ -188,10 +196,6 @@ class _ProfileState extends State<Profile> {
                       ],
                     ),
                   ),
-
-
-
-
                 ],
               ),
             ),
@@ -284,19 +288,6 @@ class _TopPortionState extends State<_TopPortion> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('이미지 업로드가 완료되었습니다.')),
       );
-
-      // 이미지 업로드가 완료되면 서버에서 이미지를 다시 읽어서 화면에 표시
-      // final String fileName = _accountId! + '.png';
-      // final imageUrl =
-      //     'http://3.39.88.187:3000/user/loding?image=$fileName'; // 이미지 URL
-      // final imageResponse = await http.get(Uri.parse(imageUrl));
-      // Uint8List? _imageData;
-      // if (imageResponse.statusCode == 200) {
-      //   final imageData = imageResponse.bodyBytes;
-      //   setState(() {
-      //     _imageData = imageData; // 화면에 표시할 이미지 데이터
-      //   });
-      // }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('이미지 업로드가 실패하였습니다.')),
