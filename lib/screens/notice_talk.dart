@@ -42,8 +42,60 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   @override
   void initState() {
     super.initState();
+    studentinfo();
     notices = fetchNotices();
   }
+
+  int? _permission;
+  void studentinfo() async {
+
+    setState(() => _isLoading = true);
+
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('게시글 작성에 실패했습니다. (로그인 만료)')));
+      });
+      return;
+    }
+
+
+    final response = await http.get(
+      Uri.parse('http://3.39.88.187:3000/user/student'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 201) {
+      // Success
+
+      final responseData = jsonDecode(response.body);
+      setState(() {
+        _permission = responseData[0]['permission'];
+
+
+      });
+    } else {
+      // Failure
+      setState(() {
+        final responseData = jsonDecode(response.body);
+
+        _isLoading = false;
+        _errorMessage = responseData['message'];
+      });
+    }
+  }
+
+
+
+
+
 
   //글 작성
   void _submitForm() async {
@@ -51,7 +103,6 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
     if (formState != null && formState.validate()) {
       setState(() => _isLoading = true);
     }
-
 
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
@@ -212,33 +263,41 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   }
 
   Widget buildTextComposer() {
-    return IconTheme(
-      data: IconThemeData(color: Theme.of(context).accentColor),
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.0),
-        child: Row(
-          children: <Widget>[
-            Flexible(
-              child: TextField(
-                controller: _titleController,//컨트롤러 연결
-                decoration: InputDecoration.collapsed(hintText: '메시지 보내기'),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 4.0),
-              child:
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: _isLoading ? null : () {
-                    _submitForm();
-                    _noticeController.clear();//입력한 텍스트 초기화
-                  }
+    if (_permission == 1) {
+      return SizedBox.shrink();
+    }
+    else if (_permission == null) {
+      return Text('권한정보 받아오기 실패');
+    }
+    else {
+      return IconTheme(
+        data: IconThemeData(color: Theme.of(context).accentColor),
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: <Widget>[
+              Flexible(
+                child: TextField(
+                  controller: _titleController,//컨트롤러 연결
+                  decoration: InputDecoration.collapsed(hintText: '메시지 보내기'),
                 ),
-            ),
-          ],
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
+                child:
+                IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: _isLoading ? null : () {
+                      _submitForm();
+                      _noticeController.clear();//입력한 텍스트 초기화
+                    }
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
 

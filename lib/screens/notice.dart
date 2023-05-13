@@ -62,7 +62,7 @@ class Notice extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => NoticeTalkScreen(boardId: 3,)),//boardId: 3
+                        MaterialPageRoute(builder: (context) => NoticeTalkScreen(boardId: 3)),//boardId: 3
                       );
                     },
                     child: Text(
