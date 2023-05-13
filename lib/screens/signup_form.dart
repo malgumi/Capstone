@@ -61,6 +61,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }),
       );
 
+
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -68,17 +69,10 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
 
-        final responseData = jsonDecode(response.body);
-        verificationCode.text = responseData['verificationcode'];
-
-        await signup(
-          student_id.text,
-          email,
-          verificationCode.text,
-          name.text,
-          password.text,
-          gradeValue,
-        );
+        final jsonResponse = jsonDecode(response.body);
+        final storage = FlutterSecureStorage();
+        await storage.write(key: 'verificationCode', value: jsonResponse['verificationCode']);
+        return null;
 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -104,8 +98,8 @@ class _SignUpPageState extends State<SignUpPage> {
     final String emailValue = email.trim();
     final String passwordValue = password.trim();
     final String password2Value = password.trim();
-    final String _verificationCode = verificationCode.trim();
     final int gradeValue = grade;
+    final String _verificationCode = verificationCode.trim();
     print("실행됨");
 
     if (passwordValue != password2Value) {
@@ -116,6 +110,9 @@ class _SignUpPageState extends State<SignUpPage> {
     }
 
     try {
+      final storage = FlutterSecureStorage();
+      final verificationCode = await storage.read(key: 'verificationCode');
+
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
@@ -128,6 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
           'verificationCode': verificationCode,
           'password': passwordValue,
           'grade': gradeValue,
+          '_verificationCode' : _verificationCode,
         }),
       );
 
@@ -261,7 +259,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   color: const Color(0xffC1D3FF),
                   child: MaterialButton(
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
                         try {
                           // 이메일 인증번호 확인
                           await sendVerificationEmail(email.text);
@@ -272,7 +269,6 @@ class _SignUpPageState extends State<SignUpPage> {
                             content: Text("인증메일 발송에 실패했습니다."),
                           ));
                         }
-                      }
                     },
                     child: Text(
                       "인증하기",
