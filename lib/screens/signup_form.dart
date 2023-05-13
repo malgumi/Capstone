@@ -61,6 +61,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }),
       );
 
+
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -68,17 +69,10 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         );
 
-        final responseData = jsonDecode(response.body);
-        verificationCode.text = responseData['verificationcode'];
-
-        await signup(
-          student_id.text,
-          email,
-          verificationCode.text,
-          name.text,
-          password.text,
-          gradeValue,
-        );
+        final jsonResponse = jsonDecode(response.body);
+        final storage = FlutterSecureStorage();
+        await storage.write(key: 'verificationCode', value: jsonResponse['verificationCode']);
+        return null;
 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,6 +110,9 @@ class _SignUpPageState extends State<SignUpPage> {
     }
 
     try {
+      final storage = FlutterSecureStorage();
+      final verificationCode = await storage.read(key: 'verificationCode');
+
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
