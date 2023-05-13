@@ -49,6 +49,14 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<void> sendVerificationEmail(String email) async { //인증메일 발송 함수
     final String apiUrl = 'http://3.39.88.187:3000/user/sendverificationemail';
 
+    if (!email.endsWith("@gm.hannam.ac.kr")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("이메일 형식이 올바르지 않습니다."),
+        ),
+      );
+      return;
+    }
 
     try {
       final response = await http.post(
@@ -244,8 +252,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
                   controller: email,
-                  validator: (value) =>
-                  (value!.isEmpty) ? "이메일을 입력 해 주세요" : null,
+                  validator: (value) {
+                  if (value!.isEmpty) { return "이메일을 입력 해 주세요"; }
+                  else if (!value.endsWith("@gm.hannam.ac.kr")) {
+                  return "이메일 형식이 올바르지 않습니다";
+                    }
+                  return null;
+                  },
+
                   style: style,
                   decoration: InputDecoration(
                       labelText: "이메일", border: OutlineInputBorder()),
