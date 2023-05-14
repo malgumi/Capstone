@@ -7,16 +7,14 @@ import 'package:capstone/screens/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: '전체 공지',
-    home: NoticeTalkScreen(boardId: 3),
+    title: '1학년 공지',
+    home: NoticeTalkScreen_1(boardId: 3),
   ));
 }
 
-class NoticeTalkScreen extends StatefulWidget {
+class NoticeTalkScreen_1 extends StatefulWidget {
   final int boardId;
-  const NoticeTalkScreen({Key? key, required this.boardId}) : super(key: key);
-
-  //NoticeTalkScreen({required this.boardId});
+  const NoticeTalkScreen_1({Key? key, required this.boardId}) : super(key: key);
 
   @override
   NoticeTalkScreenState createState() => NoticeTalkScreenState();
@@ -24,7 +22,7 @@ class NoticeTalkScreen extends StatefulWidget {
 
 
 
-class NoticeTalkScreenState extends State<NoticeTalkScreen> {
+class NoticeTalkScreenState extends State<NoticeTalkScreen_1> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _noticeController = TextEditingController();
@@ -43,7 +41,6 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   @override
   void initState() {
     super.initState();
-    //_noticeController = TextEditingController();
     studentinfo();
     notices = fetchNotices();
   }
@@ -133,7 +130,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
       // Success
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => NoticeTalkScreen(boardId: widget.boardId)),
+        MaterialPageRoute(builder: (context) => NoticeTalkScreen_1(boardId: widget.boardId)),
       );
     }
     else {
@@ -150,7 +147,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   //서버로부터 게시글 목록을 가져옴
   Future<List<dynamic>> fetchNotices() async {
     final response = await http
-        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3'));
+        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=5'));
 
     if (response.statusCode == 200) {
       final List<dynamic> notice = jsonDecode(response.body);
@@ -167,7 +164,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '컴퓨터공학과 전체 공지',
+          '컴퓨터공학과 1학년 공지',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black,),
         ),
@@ -187,7 +184,6 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
                   final notices = snapshot.data!;
                   return ListView.builder(
                     itemCount: notices.length,
-                    reverse: true,
                     itemBuilder: (BuildContext context, int index) {
                       dynamic notice = notices[index];
                       return buildNoticeItem(context, notice);//, token
@@ -262,9 +258,6 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   Widget buildTextComposer() {
     if (_permission == 1) {
       return SizedBox.shrink();
-    }
-    else if (_permission == null) {
-      return Text('권한정보 받아오기 실패');
     }
     else {
       return IconTheme(
