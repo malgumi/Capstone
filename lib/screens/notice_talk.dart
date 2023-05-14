@@ -14,8 +14,9 @@ void main() {
 
 class NoticeTalkScreen extends StatefulWidget {
   final int boardId;
+  const NoticeTalkScreen({Key? key, required this.boardId}) : super(key: key);
 
-  NoticeTalkScreen({required this.boardId});
+  //NoticeTalkScreen({required this.boardId});
 
   @override
   NoticeTalkScreenState createState() => NoticeTalkScreenState();
@@ -27,7 +28,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _noticeController = TextEditingController();
-  String _errorMessage = '먼가먼가일어낫음';
+  String _errorMessage = '';
   bool _isLoading = false;
 
   late Future<List<dynamic>> notices;
@@ -42,10 +43,12 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   @override
   void initState() {
     super.initState();
+    //_noticeController = TextEditingController();
     studentinfo();
     notices = fetchNotices();
   }
 
+  //권한받아오기
   int? _permission;
   void studentinfo() async {
 
@@ -78,8 +81,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
       final responseData = jsonDecode(response.body);
       setState(() {
         _permission = responseData[0]['permission'];
-
-
+        _isLoading = false;//임의추가
       });
     } else {
       // Failure
@@ -93,16 +95,11 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   }
 
 
-
-
-
-
   //글 작성
   void _submitForm() async {
-    final formState = _formKey.currentState;
-    if (formState != null && formState.validate()) {
-      setState(() => _isLoading = true);
-    }
+    if (_formKey.currentState?.validate() == false) return;
+
+    setState(() => _isLoading = true);
 
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
