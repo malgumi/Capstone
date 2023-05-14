@@ -3,10 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/PostScreen.dart';
-import 'package:capstone/screens/WritePostScreen.dart';
 import 'package:intl/intl.dart';
-import 'package:capstone/screens/party_board.dart';
-import 'package:capstone/main.dart';
 import 'package:capstone/screens/drawer.dart';
 void main() {
   runApp(MaterialApp(
