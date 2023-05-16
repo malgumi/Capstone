@@ -324,8 +324,16 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: TextFormField(
                   obscureText: true,
                   controller: password,
-                  validator: (value) =>
-                  (value!.isEmpty) ? "비밀번호를 입력 해 주세요" : null,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "비밀번호를 입력 해 주세요";
+                    } else if (value.length < 8) {
+                      return "비밀번호는 8자 이상이어야 합니다";
+                    } else if (!RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$').hasMatch(value)) {
+                      return "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다";
+                    }
+                    return null;
+                  },
                   style: style,
                   decoration: InputDecoration(
                       prefixIcon: Icon(Icons.lock),
