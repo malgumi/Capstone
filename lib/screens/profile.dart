@@ -473,9 +473,12 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               ),
               validator: (value) {
                 if (value!.isEmpty) {
-                  return '새로운 비밀번호를 입력하세요.';
+                  return "비밀번호를 입력 해 주세요";
+                } else if (value.length < 8) {
+                  return "비밀번호는 8자 이상이어야 합니다";
+                } else if (!RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$').hasMatch(value)) {
+                  return "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다";
                 }
-                // TODO: 새로운 비밀번호가 조건에 맞는지 확인하는 로직 작성
                 return null;
               },
             ),
