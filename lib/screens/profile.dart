@@ -448,23 +448,23 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
-              controller: _currentPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: '현재 비밀번호',
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return '현재 비밀번호를 입력하세요.';
-                }
-                if(value != _accountPassword){
-                  print(_accountPassword);
-                  return '비밀번호가 일치하지 않습니다';
-                }
-
-              },
-            ),
+            // TextFormField(
+            //   controller: _currentPasswordController,
+            //   obscureText: true,
+            //   decoration: InputDecoration(
+            //     labelText: '현재 비밀번호',
+            //   ),
+            //   validator: (value) {
+            //     if (value!.isEmpty) {
+            //       return '현재 비밀번호를 입력하세요.';
+            //     }
+            //     if(value != _accountPassword){
+            //       print(_accountPassword);
+            //       return '비밀번호가 일치하지 않습니다';
+            //     }
+            //
+            //   },
+            // ),
             TextFormField(
               controller: _newPasswordController,
               obscureText: true,
