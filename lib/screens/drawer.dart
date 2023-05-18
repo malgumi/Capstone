@@ -1,3 +1,7 @@
+import 'package:capstone/screens/gScore/gscore_list_screen.dart';
+import 'package:capstone/screens/gScore/gscore_self_calc_screen.dart';
+import 'package:capstone/screens/gScore/gscore_myscore.dart';
+import 'package:capstone/screens/pages/mobile/mobile_screen.dart';
 import 'package:capstone/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/main.dart';
@@ -42,6 +46,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
   String? _accountName;
   String? _accountEmail;
+  String? _accountPermission;
   void _studentinfo() async {
 
     setState(() => _isLoading = true);
@@ -60,7 +65,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
 
     final response = await http.get(
-      Uri.parse('http://3.39.88.187:3000/user/student'),
+      Uri.parse('http://localhost:3000/user/student'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -74,6 +79,7 @@ class _MyDrawerState extends State<MyDrawer> {
       setState(() {
         _accountName = responseData[0]['student_id'].toString();
         _accountEmail = responseData[0]['name'];
+        _accountPermission = responseData[0]['permission'].toString();
 
 
       });
@@ -108,7 +114,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   ),
                   currentAccountPicture: CircleAvatar(
                     backgroundImage: Image.network(
-                      'http://3.39.88.187:3000/user/loding?image=$fileName',
+                      'http://localhost:3000/user/loding?image=$fileName',
                       errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                         return Image.asset(
                           'assets/profile.png',
@@ -137,8 +143,8 @@ class _MyDrawerState extends State<MyDrawer> {
                   title: Text('공지사항'),
                   onTap: () {
                     Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Notice()),
+                      context,
+                      MaterialPageRoute(builder: (context) => Notice()),
                     );
                   },
                 ),
@@ -176,6 +182,38 @@ class _MyDrawerState extends State<MyDrawer> {
                   },
                 ),
                 ListTile(
+                  leading: Icon(Icons.subdirectory_arrow_left, color: Colors.grey[800]),
+                  title: Text('졸업점수 신청 및 내역'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GScoreForm()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.calculate, color: Colors.grey[800]),
+                  title: Text('졸업 점수 셀프 계산기'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SelfCalcScreen()),
+                    );
+                  },
+                ),
+                ListTile(
+                    leading: Icon(Icons.person, color: Colors.grey[800]),
+                    title: Text('나의 졸업인증 점수'),
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyScorePage()),
+                      );
+                    }
+                ),
+                ListTile(
                     leading: Icon(Icons.person, color: Colors.grey[800]),
                     title: Text('프로필'),
                     onTap: (){
@@ -186,8 +224,41 @@ class _MyDrawerState extends State<MyDrawer> {
                     }
                 ),
 
+                ListTile(
+                  leading: Icon(Icons.person, color: Colors.grey[800]),
+                  title: Text('관리자 페이지'),
+                  onTap: () {
+                    if (_accountPermission == "2") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MobileScreen()),
+                      );
+                    }
+                    else {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('액세스 거부'),
+                            content: Text('접근 권한이 없습니다.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('확인'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+
               ],
             ),
+
           ),
           ListTile(
             leading: Icon(Icons.logout, color: Colors.grey[800]),
