@@ -1,17 +1,48 @@
 import 'package:capstone/screens/notice.dart';
 import 'package:flutter/material.dart';
-import 'package:capstone/screens/party_board.dart';
-import 'package:capstone/screens/free_board.dart';
 import 'package:capstone/screens/login_form.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
 import 'package:capstone/screens/profile.dart';
 import 'package:capstone/screens/drawer.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_options.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
 
 void main() async {
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  //======↓IOS용 권한 허용 코드↓=========
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+  print('User granted permission: ${settings.authorizationStatus}');
+  //======↑IOS용 권한 허용 코드↑=========
+
+  FirebaseMessaging.instance.getToken().then((token) {
+    print('Firebase Cloud Messaging Token: $token');
+  });
+
   runApp(MyApp());
 }
 
@@ -23,7 +54,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      home: MyHomePage(),
     );
   }
 }
@@ -37,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _errorMessage = '';
   bool _isLoading = false;
-
 
   @override
   Widget build(BuildContext context) {
