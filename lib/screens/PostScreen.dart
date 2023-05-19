@@ -245,7 +245,7 @@ class _PostScreenState extends State<PostScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('http://localhost:3000/post/deletepost/${widget.post['post_id']}'),
+      Uri.parse('http://3.39.88.187:3000/post/deletepost/${widget.post['post_id']}'),
       headers: <String, String>{ //헤더파일 추가
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,

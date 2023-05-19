@@ -108,7 +108,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
       return ;
     }
     final response = await http.get(
-      Uri.parse('http://localhost:3000/gScore/posts'),
+      Uri.parse('http://3.39.88.187:3000/gScore/posts'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -136,7 +136,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
   Future<void> _getWriterInfo() async {
 
     final response = await http.get(
-      Uri.parse('http://localhost:3000/gScore/writer?student_id=${widget.post['gsuser_id']}'),
+      Uri.parse('http://3.39.88.187:3000/gScore/writer?student_id=${widget.post['gsuser_id']}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -155,7 +155,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
 
   Future<void> _fetchGsInfo() async {
     final response =
-    await http.get(Uri.parse('http://localhost:3000/gScore/info'));
+    await http.get(Uri.parse('http://3.39.88.187:3000/gScore/info'));
 
     if (response.statusCode == 200) {
       final funcResult = jsonDecode(response.body);
@@ -231,7 +231,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
       return;
     }
     final response = await http.get(
-      Uri.parse('http://localhost:3000/gScore/user'),
+      Uri.parse('http://3.39.88.187:3000/gScore/user'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -256,7 +256,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
 
   Future<void> _getFileInfo() async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/gScore/fileInfo?postId=${widget.post['gspost_id']}'),
+      Uri.parse('http://3.39.88.187:3000/gScore/fileInfo?postId=${widget.post['gspost_id']}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -291,7 +291,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
   Future<String?> downloadFile() async {
 
     final response = await http.get(
-      Uri.parse('http://localhost:3000/gScore/download?reqPath=${Uri.encodeComponent(uploadedFilePath ?? '')}'),
+      Uri.parse('http://3.39.88.187:3000/gScore/download?reqPath=${Uri.encodeComponent(uploadedFilePath ?? '')}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -359,7 +359,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
 
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://localhost:3000/gScore/upload'),
+        Uri.parse('http://3.39.88.187:3000/gScore/upload'),
       );
 
 
@@ -387,7 +387,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
   void deleteFile() async {
 
     final response = await http.delete(
-      Uri.parse('http://localhost:3000/gScore/deleteFile?reqPath=${Uri.encodeComponent(uploadedFilePath ?? '')}'),
+      Uri.parse('http://3.39.88.187:3000/gScore/deleteFile?reqPath=${Uri.encodeComponent(uploadedFilePath ?? '')}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -433,7 +433,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
       'acceptedScore': _acceptedScore,
     };
     final response = await http.post(
-      Uri.parse('http://localhost:3000/gScore/update'),
+      Uri.parse('http://3.39.88.187:3000/gScore/update'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -467,7 +467,7 @@ class _GScoreApcCtState extends State<GScoreApcCt> {
     };
 
     final response = await http.delete(
-      Uri.parse('http://localhost:3000/gScore/deletePost'),
+      Uri.parse('http://3.39.88.187:3000/gScore/deletePost'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,

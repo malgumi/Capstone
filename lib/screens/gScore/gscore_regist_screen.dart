@@ -34,7 +34,7 @@ class _GScoreApcState extends State<GScoreApc> {
   Future<void> _fetchLists() async {
     //목록 불러오기
     final response =
-    await http.get(Uri.parse('http://localhost:3000/gScore/info'));
+    await http.get(Uri.parse('http://3.39.88.187:3000/gScore/info'));
 
     if (response.statusCode == 200) {
       final funcResult = jsonDecode(response.body);
@@ -125,7 +125,7 @@ class _GScoreApcState extends State<GScoreApc> {
 
 
     final response = await http.post(
-      Uri.parse('http://localhost:3000/gScore/write'),
+      Uri.parse('http://3.39.88.187:3000/gScore/write'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -161,7 +161,7 @@ class _GScoreApcState extends State<GScoreApc> {
 
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://localhost:3000/gScore/upload'),
+        Uri.parse('http://3.39.88.187:3000/gScore/upload'),
       );
 
 

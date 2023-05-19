@@ -27,7 +27,7 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
   int i =0;
 
   Future<List<Map<String, dynamic>>> _getMaxScores() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/gScore/maxScore'));
+    final response = await http.get(Uri.parse('http://3.39.88.187:3000/gScore/maxScore'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as List<dynamic>;
@@ -56,7 +56,7 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
     final maxScores = await _getMaxScores(); // _getMaxScores 호출하여 결과를 maxScores 변수에 할당
     print(maxScores);
     final response = await http.get(
-      Uri.parse('http://localhost:3000/gScore/user'),
+      Uri.parse('http://3.39.88.187:3000/gScore/user'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -276,7 +276,7 @@ class _gScoreCheckState extends State<gScore_check> {
     }
 
     final response = await http.get(
-      Uri.parse('http://localhost:3000/gScore/user'),
+      Uri.parse('http://3.39.88.187:3000/gScore/user'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
