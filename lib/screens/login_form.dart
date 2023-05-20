@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> { //LoginPage  --> _LoginPageStat
     super.initState();
     student_id = TextEditingController(text: ""); //변수를 여기서 초기화함.
     password = TextEditingController(text: "");
+    _checkSession();
   }
 
   @override
@@ -30,6 +31,17 @@ class _LoginPageState extends State<LoginPage> { //LoginPage  --> _LoginPageStat
     student_id.dispose();
     password.dispose();
     super.dispose();
+  }
+
+  Future<void> _checkSession() async {
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MyHomePage()),
+      );
+    }
   }
 
   @override

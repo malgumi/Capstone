@@ -29,6 +29,9 @@ class _ProfileState extends State<Profile> {
   String? _accountId;
   String? _accountName;
   String? _accountEmail;
+  String? _accountIntroduction;
+
+
   void _studentinfo() async {
 
     setState(() => _isLoading = true);
@@ -62,6 +65,7 @@ class _ProfileState extends State<Profile> {
         _accountId = responseData[0]['student_id'].toString();
         _accountName = responseData[0]['name'];
         _accountEmail = responseData[0]['email'];
+        _accountIntroduction = responseData[0]['introduction'];
       });
     } else {
       // Failure
@@ -73,8 +77,47 @@ class _ProfileState extends State<Profile> {
       });
     }
   }
+
+  Future<void> _editIntroduction(String introduction) async {
+    final url = Uri.parse('http://localhost:3000/post/introduction');
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('자기소개 수정에 실패했습니다.(로그인 만료)')));
+      });
+      return;
+    }
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+      body: jsonEncode( {
+        'introduction': introduction,
+      }),
+    );
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('자기소개 수정이 수정되었습니다.')));
+      setState(() {
+        _accountIntroduction = introduction;
+      });
+    }
+    else if (response.statusCode == 300){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('수정 권한이 없습니다.')));
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('자기소개 수정에 실패했습니다.')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String introductionText = '';
+    TextEditingController _controller = TextEditingController();
+    _controller.text = _accountIntroduction ?? '';
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -100,48 +143,110 @@ class _ProfileState extends State<Profile> {
                       _accountName!,
                       style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "졸업 과제 중인데 Node.js로 백엔드 만들고 있습니다.",
-                      style: TextStyle(color: Colors.grey),
+                  const SizedBox(height: 2),
+                  Text(
+                    _accountIntroduction ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey),
+                  ),
 
-                    ),
 
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      FloatingActionButton.extended(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ChangePasswordDialog();
-                            },
-                          );
-                        },
-                        heroTag: 'changePassword',
-                        tooltip: '비밀번호 변경',
-                        elevation: 0,
-                        label: const Text("비밀번호 변경"),
-                        icon: const Icon(Icons.lock),
+                      Expanded(
+                        child: FloatingActionButton.extended(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ChangePasswordDialog();
+                              },
+                            );
+                          },
+                          heroTag: 'changePassword',
+                          tooltip: '비밀번호 변경',
+                          elevation: 0,
+                          label: const Text("비밀번호 변경"),
+                          icon: const Icon(Icons.lock),
+                        ),
                       ),
                       const SizedBox(width: 16.0),
-                      FloatingActionButton.extended(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MyPost()),
-                          );
-                        },
-                        heroTag: 'mesage',
-                        elevation: 0,
-                        backgroundColor: Colors.red,
-                        label: const Text("내가 쓴 글"),
-                        icon: const Icon(Icons.message_rounded),
+                      Expanded(
+                        child: FloatingActionButton.extended(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MyPost()),
+                            );
+                          },
+                          heroTag: 'mesage',
+                          elevation: 0,
+                          backgroundColor: Colors.red,
+                          label: const Text("내가 쓴 글"),
+                          icon: const Icon(Icons.message_rounded),
+                        ),
                       ),
+                      const SizedBox(width: 16.0),
+                      Expanded(
+                        child: FloatingActionButton.extended(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("자기소개 수정"),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      TextField(
+                                        controller: _controller,
+                                        onChanged: (value) {
+                                          introductionText = value; // 텍스트 필드의 값을 변수에 저장
+                                        },
+                                        decoration: InputDecoration(
+                                          labelText: "자기소개",
+                                          hintText: "자기소개를 입력해주세요",
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        // 수정 로직을 추가하세요.
+                                        // introductionText 변수에 저장된 자기소개 내용을 사용하여 처리
+                                        _editIntroduction(introductionText); // 자기소개 수정 API 호출
+                                        Navigator.pop(context); // 팝업 창 닫기
+                                      },
+                                      child: Text("저장"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context); // 팝업 창 닫기
+                                      },
+                                      child: Text("취소"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          heroTag: 'Introduction',
+                          elevation: 0,
+                          backgroundColor: Colors.lightGreen,
+                          label: const Text("자기소개 수정"),
+                          icon: const Icon(Icons.edit),
+                        ),
+                      ),
+
+
+
                     ],
                   ),
+
                   const SizedBox(height: 20),
 
                   Container(
