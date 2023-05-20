@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/signup_form.dart';
 import 'package:capstone/main.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-//test 주석 추가
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
