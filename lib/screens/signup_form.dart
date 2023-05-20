@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/login_form.dart';
+import 'package:capstone/main.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -21,6 +23,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final storage = FlutterSecureStorage();
   String _selectedGrade = "1학년";
   int gradeValue = 1;
+  String fcmToken = '';
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _SignUpPageState extends State<SignUpPage> {
     verificationCode = TextEditingController(text: "");
     password = TextEditingController(text: "");
     password2 = TextEditingController(text: "");
+    _getFCMToken();
   }
 
   @override
@@ -40,6 +44,13 @@ class _SignUpPageState extends State<SignUpPage> {
     password.dispose();
     password2.dispose();
     super.dispose();
+  }
+
+  Future<void> _getFCMToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    setState(() {
+      fcmToken = token ?? '';
+    });
   }
 
   Future<void> sendVerificationEmail(String email) async {
@@ -103,6 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final String password2Value = password.trim();
     final int gradeValue = grade;
     final String _verificationCode = verificationCode.trim();
+    final String fcm_token = fcmToken.trim();
     print("실행됨");
 
     if (passwordValue != password2Value) {
@@ -129,6 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
           'password': passwordValue,
           'grade': gradeValue,
           '_verificationCode': _verificationCode,
+          'fcm_token': fcm_token,
         }),
       );
 
