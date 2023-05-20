@@ -5,9 +5,11 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
+
 import 'drawer.dart';
 
-//테스트 주석
+
+
 
 class Profile extends StatefulWidget {
   @override
@@ -77,7 +79,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _editIntroduction(String introduction) async {
-    final url = Uri.parse('http://localhost:3000/post/introduction');
+    final url = Uri.parse('http://3.39.88.187:3000/post/introduction');
     final storage = FlutterSecureStorage();
     final token = await storage.read(key: 'token');
     if (token == null) {
@@ -141,13 +143,6 @@ class _ProfileState extends State<Profile> {
                       _accountName!,
                       style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _accountIntroduction ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey),
-                  ),
 
 
                   const SizedBox(height: 16),
@@ -208,6 +203,8 @@ class _ProfileState extends State<Profile> {
                                           labelText: "자기소개",
                                           hintText: "자기소개를 입력해주세요",
                                         ),
+                                        textInputAction: TextInputAction.newline, // 엔터를 눌렀을 때 다음 줄로 이동
+                                        maxLines: null, // 텍스트 필드의 크기를 자동으로 조정하여 여러 줄 입력 가능
                                       ),
                                     ],
                                   ),
@@ -240,65 +237,49 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
 
-
-
                     ],
                   ),
 
                   const SizedBox(height: 20),
 
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          '개인 정보',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 30),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 12),
-                            Text('- 학번', style: const TextStyle(fontSize: 17, color: Color(0xffC1D3FF)),),
-                            Text(
-                              _accountId ?? '',
-                              style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15
-                              ),
-
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
                             ),
-                            const SizedBox(height: 12),
-                            Text('- 이메일', style: const TextStyle(fontSize: 17, color: Color(0xffC1D3FF)),),
-                            Text(
-                              _accountEmail ?? '',
-                              style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 15
-                                  ),
-
-                            ),
-                            const SizedBox(height: 12),
                           ],
                         ),
-                      ],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              '자기소개',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              _accountIntroduction ?? '',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
+
                 ],
               ),
             ),
@@ -658,3 +639,4 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     );
   }
 }
+

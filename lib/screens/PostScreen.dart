@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/EditPostScreen.dart';
-//테스트 주석
+
 class PostScreen extends StatefulWidget {
   final dynamic post;
 
@@ -25,8 +25,74 @@ class _PostScreenState extends State<PostScreen> {
   void initState() {
     super.initState();
     comments = fetchComments();
+    _studentinfo();
+    _fetchboard();
   }
 
+  String? _boardName;
+  void _fetchboard() async {
+    int board_id = widget.post['board_id'];
+    final response = await http
+        .get(Uri.parse('http://3.39.88.187:3000/post/board?board_id=$board_id'));
+    if (response.statusCode == 201) {
+      final responseData = jsonDecode(response.body);
+      print(responseData['rows'][0]['board_name']);
+      setState(() {
+        _boardName = responseData['rows'][0]['board_name'];
+
+      });
+    } else {
+      throw Exception('Failed to load board');
+    }
+  }
+
+  String? _accountId;
+  String? _accountIntroduction;
+
+  void _studentinfo() async {
+
+    setState(() => _isLoading = true);
+
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('게시글 작성에 실패했습니다. (로그인 만료)')));
+      });
+      return;
+    }
+
+
+    final response = await http.get(
+      Uri.parse('http://3.39.88.187:3000/user/student'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 201) {
+      // Success
+
+      final responseData = jsonDecode(response.body);
+      print(responseData[0]['student_id']);
+      setState(() {
+        _accountId = responseData[0]['student_id'].toString();
+        _accountIntroduction = responseData[0]['introduction'];
+      });
+    } else {
+      // Failure
+      setState(() {
+        final responseData = jsonDecode(response.body);
+
+        _isLoading = false;
+        _errorMessage = responseData['message'];
+      });
+    }
+  }
   //댓글 가져오기
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(Uri.parse(
@@ -263,7 +329,7 @@ class _PostScreenState extends State<PostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.post['post_title'],
+          _boardName ?? '',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20.0,
@@ -292,6 +358,15 @@ class _PostScreenState extends State<PostScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 13.0),
+            Text(
+              widget.post['post_title'],
+              style: TextStyle(
+
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(height: 16.0),
             Text(
               widget.post['post_content'],
@@ -329,6 +404,13 @@ class _PostScreenState extends State<PostScreen> {
                 ),
               ],
             ),
+            SizedBox(height: 13.0,),
+            widget.post['board_id'] == 2 ?
+            Text(
+              _accountIntroduction ?? '',
+              style: TextStyle(color: Colors.grey),
+            ) :
+            Container(),
             SizedBox(height: 32.0),
             Divider(
               height: 1.0,
