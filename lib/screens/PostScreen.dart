@@ -25,8 +25,8 @@ class _PostScreenState extends State<PostScreen> {
   void initState() {
     super.initState();
     comments = fetchComments();
-    _studentinfo();
     _fetchboard();
+    _fetchintroduction();
   }
 
   String? _boardName;
@@ -45,54 +45,25 @@ class _PostScreenState extends State<PostScreen> {
       throw Exception('Failed to load board');
     }
   }
-
-  String? _accountId;
   String? _accountIntroduction;
-
-  void _studentinfo() async {
-
-    setState(() => _isLoading = true);
-
-    final storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'token');
-    if (token == null) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('게시글 작성에 실패했습니다. (로그인 만료)')));
-      });
-      return;
-    }
-
-
-    final response = await http.get(
-      Uri.parse('http://3.39.88.187:3000/user/student'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': token,
-      },
-    );
-
+  void _fetchintroduction() async {
+    int student_id = widget.post['student_id'];
+    final response = await http
+        .get(Uri.parse('http://localhost:3000/user/info?student_id=$student_id'));
     if (response.statusCode == 201) {
-      // Success
-
       final responseData = jsonDecode(response.body);
-      print(responseData[0]['student_id']);
+      print(responseData[0]['introduction']);
       setState(() {
-        _accountId = responseData[0]['student_id'].toString();
         _accountIntroduction = responseData[0]['introduction'];
+
       });
     } else {
-      // Failure
-      setState(() {
-        final responseData = jsonDecode(response.body);
-
-        _isLoading = false;
-        _errorMessage = responseData['message'];
-      });
+      throw Exception('Failed to load board');
     }
   }
+
+
+
   //댓글 가져오기
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(Uri.parse(
