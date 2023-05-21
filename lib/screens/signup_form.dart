@@ -328,8 +328,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   readOnly: true,
                   onTap: _showGradeSelectionDialog,
                   controller: TextEditingController(text: _selectedGrade),
-                  validator: (value) =>
-                  (value!.isEmpty) ? "학년을 선택해 주세요" : null,
                   style: style,
                   decoration: InputDecoration(
                       labelText: "학년", border: OutlineInputBorder()),
