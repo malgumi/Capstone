@@ -107,6 +107,10 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _key,
+      appBar: AppBar(
+        title: Text("계정 만들기"),
+        backgroundColor: Color(0xffC1D3FF),
+      ),
       body: Form(
         key: _formKey,
         child: Center(

@@ -49,7 +49,7 @@ class _PostScreenState extends State<PostScreen> {
   void _fetchintroduction() async {
     int student_id = widget.post['student_id'];
     final response = await http
-        .get(Uri.parse('http://localhost:3000/user/info?student_id=$student_id'));
+        .get(Uri.parse('http://3.39.88.187:3000/user/info?student_id=$student_id'));
     if (response.statusCode == 201) {
       final responseData = jsonDecode(response.body);
 
