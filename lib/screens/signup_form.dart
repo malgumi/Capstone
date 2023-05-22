@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:capstone/screens/login_form.dart';
 import 'package:capstone/main.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-//테스트 주석
+
 class SignUpPage extends StatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -18,12 +18,20 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController verificationCode = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController password2 = TextEditingController();
+  String _selectedItem = '';
   final _formKey = GlobalKey<FormState>();
   final _key = GlobalKey<ScaffoldState>();
   final storage = FlutterSecureStorage();
   String _selectedGrade = "1학년";
   int gradeValue = 1;
   String fcmToken = '';
+
+  final List<String> _grades = [
+    '1학년',
+    '2학년',
+    '3학년',
+    '4학년',
+  ];
 
   @override
   void initState() {
@@ -177,48 +185,18 @@ class _SignUpPageState extends State<SignUpPage> {
         return AlertDialog(
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                GestureDetector(
-                  child: Text('1학년'),
+              children: _grades.map((grade) {
+                return GestureDetector(
+                  child: Text(grade),
                   onTap: () {
                     setState(() {
-                      _selectedGrade = '1학년';
-                      gradeValue = 1;
+                      _selectedGrade = grade;
+                      gradeValue = _grades.indexOf(grade) + 1;
                     });
                     Navigator.of(context).pop();
                   },
-                ),
-                GestureDetector(
-                  child: Text('2학년'),
-                  onTap: () {
-                    setState(() {
-                      _selectedGrade = '2학년';
-                      gradeValue = 2;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-                GestureDetector(
-                  child: Text('3학년'),
-                  onTap: () {
-                    setState(() {
-                      _selectedGrade = '3학년';
-                      gradeValue = 3;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-                GestureDetector(
-                  child: Text('4학년'),
-                  onTap: () {
-                    setState(() {
-                      _selectedGrade = '4학년';
-                      gradeValue = 4;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+                );
+              }).toList(),
             ),
           ),
         );
@@ -345,22 +323,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: <Widget>[
-                    Text('학년'),
-                    Text(
-                      _selectedGrade,
-                      style: TextStyle(fontSize: 30),
-                    ),
-                    SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        _showGradeSelectionDialog();
-                      },
-                      child: Text('선택'),
-                    ),
-                  ],
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  readOnly: true,
+                  onTap: _showGradeSelectionDialog,
+                  controller: TextEditingController(text: _selectedGrade),
+                  style: style,
+                  decoration: InputDecoration(
+                      labelText: "학년", border: OutlineInputBorder()),
                 ),
               ),
               Padding(
