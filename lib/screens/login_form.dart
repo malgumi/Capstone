@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -19,13 +21,15 @@ class _LoginPageState extends State<LoginPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  late var timer;
   @override
   void initState() {
     super.initState();
     student_id = TextEditingController(text: "");
     password = TextEditingController(text: "");
-    //_checkSession();
+    _checkSession();
     _getFCMToken();
+
   }
 
   @override

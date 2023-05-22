@@ -131,7 +131,7 @@ class _ProfileState extends State<Profile> {
       ),
       body: Column(
         children: [
-          const Expanded(flex: 2, child: _TopPortion()),
+          const Expanded(flex: 1, child: _TopPortion()),
           Expanded(
             flex: 3,
             child: Padding(
@@ -371,7 +371,7 @@ class _TopPortionState extends State<_TopPortion> {
 
     if (response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('이미지 업로드가 완료되었습니다.')),
+        SnackBar(content: Text('이미지 업로드가 완료되었습니다. 앱 재실행 시 적용됩니다.')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -564,8 +564,10 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                   return "비밀번호를 입력 해 주세요";
                 } else if (value.length < 8) {
                   return "비밀번호는 8자 이상이어야 합니다";
-                } else if (!RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$').hasMatch(value)) {
-                  return "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다";
+                } else if (!RegExp(
+                    r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$')
+                    .hasMatch(value) || value.contains('?')) {
+                  return "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하며 '?' 문자를 사용할 수 없습니다";
                 }
                 return null;
               },

@@ -296,9 +296,10 @@ class _SignUpPageState extends State<SignUpPage> {
                       return "비밀번호는 8자 이상이어야 합니다";
                     } else if (!RegExp(
                         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$')
-                        .hasMatch(value)) {
-                      return "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다";
+                        .hasMatch(value) || value.contains('?')) {
+                      return "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하며 '?' 문자를 사용할 수 없습니다";
                     }
+
                     return null;
                   },
                   style: style,

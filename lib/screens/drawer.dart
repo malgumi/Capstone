@@ -100,6 +100,7 @@ class _MyDrawerState extends State<MyDrawer> {
     if (_accountName == null) {
       return Center(child: CircularProgressIndicator());
     }
+    var a = 0;
     final String fileName = _accountName! + '.png';
     return Drawer(
       child: Column(
@@ -108,25 +109,83 @@ class _MyDrawerState extends State<MyDrawer> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: <Widget>[
-                UserAccountsDrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Color(0xffC1D3FF),
-                  ),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundImage: Image.network(
-                      'http://3.39.88.187:3000/user/loding?image=$fileName',
-                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                        return Image.asset(
-                          'assets/profile.png',
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    ).image,
-                    backgroundColor: Colors.white,
-                  ),
-                  accountName: Text(_accountName ?? ''),
-                  accountEmail: Text(_accountEmail ?? ''),
+                GestureDetector(
+                  onTap: () {
+                    a++;
+                    print(a);
+                    if(a == 1){
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('어라?..'),
+                            content: Text('계속 누르면 뭔가 있을거 같지 않아?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('닫기'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                    if (a == 5) { // a 값이 1인 경우에만 AlertDialog 반환
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('거의 다 와가'),
+                            content: Text('더 눌러봐'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('닫기'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                    if (a == 21) { // a 값이 1인 경우에만 AlertDialog 반환
+                      a = 0;
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('주모'),
+                            content: Text('서버 좀 켜줘'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('닫기'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: UserAccountsDrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Color(0xffC1D3FF),
+                    ),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        'http://3.39.88.187:3000/user/loding?image=$fileName',
+                      ),
+                      backgroundColor: Colors.white,
 
+                    ),
+                    accountName: Text(_accountName ?? ''),
+                    accountEmail: Text(_accountEmail ?? ''),
+                  ),
                 ),
                 ListTile(
                   leading: Icon(Icons.home, color: Colors.grey[800]),
