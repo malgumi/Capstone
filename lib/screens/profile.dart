@@ -162,8 +162,8 @@ class _ProfileState extends State<Profile> {
                           heroTag: 'changePassword',
                           tooltip: '비밀번호 변경',
                           elevation: 0,
-                          label: const Text("비밀번호 변경"),
-                          icon: const Icon(Icons.lock),
+                          label: const Text("비밀번호 변경", style: TextStyle(fontSize: 12),),
+                          icon: const Icon(Icons.lock, size: 15,),
                         ),
                       ),
                       const SizedBox(width: 16.0),
@@ -178,8 +178,8 @@ class _ProfileState extends State<Profile> {
                           heroTag: 'mesage',
                           elevation: 0,
                           backgroundColor: Colors.red,
-                          label: const Text("내가 쓴 글"),
-                          icon: const Icon(Icons.message_rounded),
+                          label: const Text("내가 쓴 글", style: TextStyle(fontSize: 12),),
+                          icon: const Icon(Icons.message_rounded, size: 15, ),
                         ),
                       ),
                       const SizedBox(width: 16.0),
@@ -211,6 +211,12 @@ class _ProfileState extends State<Profile> {
                                   actions: [
                                     TextButton(
                                       onPressed: () {
+                                        Navigator.pop(context); // 팝업 창 닫기
+                                      },
+                                      child: Text("취소"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
                                         // 수정 로직을 추가하세요.
                                         // introductionText 변수에 저장된 자기소개 내용을 사용하여 처리
                                         _editIntroduction(introductionText); // 자기소개 수정 API 호출
@@ -218,12 +224,7 @@ class _ProfileState extends State<Profile> {
                                       },
                                       child: Text("저장"),
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context); // 팝업 창 닫기
-                                      },
-                                      child: Text("취소"),
-                                    ),
+
                                   ],
                                 );
                               },
@@ -232,8 +233,8 @@ class _ProfileState extends State<Profile> {
                           heroTag: 'Introduction',
                           elevation: 0,
                           backgroundColor: Colors.lightGreen,
-                          label: const Text("자기소개 수정"),
-                          icon: const Icon(Icons.edit),
+                          label: const Text("자기소개 수정", style: TextStyle(fontSize: 12),),
+                          icon: const Icon(Icons.edit, size: 15,),
                         ),
                       ),
 
@@ -409,15 +410,17 @@ class _TopPortionState extends State<_TopPortion> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(
-                  'http://3.39.88.187:3000/user/loding?image=$fileName',
-                  fit: BoxFit.cover,
-                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                    return Image.asset(
-                      'assets/profile.png',
-                      fit: BoxFit.cover,
-                    );
-                  },
+                ClipOval(
+                  child: Image.network(
+                    'http://3.39.88.187:3000/user/loding?image=$fileName',
+                    fit: BoxFit.cover,
+                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                      return Image.asset(
+                        'assets/profile.png',
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
                 ),
                 Positioned(
                   bottom: 0,
@@ -437,6 +440,7 @@ class _TopPortionState extends State<_TopPortion> {
             ),
           ),
         )
+
       ],
     );
   }
