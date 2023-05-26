@@ -14,6 +14,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/notice.dart';
 
+import 'feedbackpage.dart';
+
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key? key}) : super(key: key);
 
@@ -222,16 +224,28 @@ class _MyDrawerState extends State<MyDrawer> {
                     decoration: BoxDecoration(
                       color: Color(0xffC1D3FF),
                     ),
-                    currentAccountPicture: CircleAvatar(
-                      backgroundImage: NetworkImage(
+                    currentAccountPicture: ClipOval(
+                      child: Image.network(
                         'http://3.39.88.187:3000/user/loding?image=$fileName',
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        },
+                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                          return Image.asset(
+                            'assets/profile.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
-                      backgroundColor: Colors.white,
-
                     ),
                     accountName: Text(_accountName ?? ''),
                     accountEmail: Text(_accountEmail ?? ''),
                   ),
+
                 ),
                 ListTile(
                   leading: Icon(Icons.home, color: Colors.grey[800]),
@@ -352,6 +366,16 @@ class _MyDrawerState extends State<MyDrawer> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => SignUpPage()),
+                        );
+                      }
+                  ),
+                  ListTile(
+                      leading: Icon(Icons.dynamic_feed, color: Colors.grey[800]),
+                      title: Text('피드백 확인'),
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => FeedBackScreen()),
                         );
                       }
                   ),
