@@ -162,50 +162,50 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '컴퓨터공학과 전체 공지',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black,),
-        ),
-        centerTitle: true,
-        backgroundColor: Color(0xffC1D3FF),
-      ),
-      drawer: MyDrawer(),
-      backgroundColor: Colors.white,//여기까진 고정
-
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<List<dynamic>>(
-              future: notices,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final notices = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: notices.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      dynamic notice = notices[index];
-                      return buildNoticeItem(context, notice);//, token
-                    },
-                  );
-                }
-                else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('${snapshot.error}'),
-                  );
-                }
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            ),
+        appBar: AppBar(
+          title: Text(
+            '컴퓨터공학과 전체 공지',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black,),
           ),
-          Container(
-            child: buildTextComposer(),//메시지 입력창
-          )
-        ],
-      )
+          centerTitle: true,
+          backgroundColor: Color(0xffC1D3FF),
+        ),
+        drawer: MyDrawer(),
+        backgroundColor: Colors.white,//여기까진 고정
+
+        body: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<dynamic>>(
+                future: notices,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final notices = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: notices.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        dynamic notice = notices[index];
+                        return buildNoticeItem(context, notice);//, token
+                      },
+                    );
+                  }
+                  else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+            Container(
+              child: buildTextComposer(),//메시지 입력창
+            )
+          ],
+        )
     );
   }
 
@@ -214,14 +214,29 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20.0),
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            color: Colors.white,
-            border: Border.all(
-              width: 2,
-              color: Colors.grey.withOpacity(0.5),
-            ),
+              borderRadius: BorderRadius.circular(16.0),
+              color: Colors.white,
+              border: Border.all(
+                width: 2,
+                color: Colors.grey.withOpacity(0.5),
+              ),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(2, 2)
+                ),
+                BoxShadow(
+                    color: Colors.white,
+                    blurRadius: 5.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(-2, -2)
+                )
+              ]
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,10 +279,19 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
         data: IconThemeData(color: Theme.of(context).accentColor),
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 8.0),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Colors.black12,
+                width: 0.5,
+              ),
+            ),
+          ),
           child: Row(
             children: <Widget>[
               Flexible(
                 child: TextField(
+                  maxLines: null,
                   controller: _titleController,//컨트롤러 연결
                   decoration: InputDecoration.collapsed(hintText: '메시지 보내기'),
                 ),

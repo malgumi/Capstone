@@ -214,14 +214,29 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_1> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20.0),
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            color: Colors.white,
-            border: Border.all(
-              width: 2,
-              color: Colors.grey.withOpacity(0.5),
-            ),
+              borderRadius: BorderRadius.circular(16.0),
+              color: Colors.white,
+              border: Border.all(
+                width: 2,
+                color: Colors.grey.withOpacity(0.5),
+              ),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(2, 2)
+                ),
+                BoxShadow(
+                    color: Colors.white,
+                    blurRadius: 5.0,
+                    spreadRadius: 1.0,
+                    offset: Offset(-2, -2)
+                )
+              ]
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,6 +283,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_1> {
             children: <Widget>[
               Flexible(
                 child: TextField(
+                  maxLines: null,
                   controller: _titleController,//컨트롤러 연결
                   decoration: InputDecoration.collapsed(hintText: '메시지 보내기'),
                 ),
