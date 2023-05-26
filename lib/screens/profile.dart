@@ -484,7 +484,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('게시글 작성에 실패했습니다. (로그인 만료)')));
+            .showSnackBar(SnackBar(content: Text('비밀번호 변경에 실패했습니다. (로그인 만료)'), backgroundColor: Colors.red,));
       });
       return;
     }
@@ -607,6 +607,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('토큰이 없습니다.'),
+                    backgroundColor: Colors.red,
                   ),
                 );
                 return;
@@ -627,14 +628,14 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               if (response.statusCode == 201) {
                 // Password change success
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('비밀번호가 변경되었습니다.')),
+                  SnackBar(content: Text('비밀번호가 변경되었습니다.'), backgroundColor: Colors.green,),
                 );
                 Navigator.of(context).pop();
               } else {
                 // Password change failed
                 final responseData = jsonDecode(response.body);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(responseData['message'])),
+                  SnackBar(content: Text(responseData['message']), backgroundColor: Colors.red,),
                 );
               }
             }

@@ -359,7 +359,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           print(error);
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text("회원 가입에 실패했습니다."),
-                          ));
+                            backgroundColor: Colors.red,
+                          )
+                          );
                         }
                       }
                     },

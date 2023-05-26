@@ -85,7 +85,7 @@ class _PostScreenState extends State<PostScreen> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 입력에 실패했습니다.(로그인 만료)')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 입력에 실패했습니다.(로그인 만료)'), backgroundColor: Colors.red,));
       });
       return;
     }
@@ -102,7 +102,7 @@ class _PostScreenState extends State<PostScreen> {
     if (response.statusCode == 201) {
       // 입력 성공 처리
       // 예시:
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 성공적으로 입력되었습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 성공적으로 입력되었습니다.'), backgroundColor: Colors.green,));
       _commentController.clear(); // 댓글 입력 완료 후, TextField를 초기화합니다.
       setState(() {
         comments = fetchComments(); // 댓글 리스트를 다시 불러옵니다.
@@ -110,7 +110,7 @@ class _PostScreenState extends State<PostScreen> {
     } else {
       // 실패 처리
       // 예시:
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 입력에 실패했습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 입력에 실패했습니다.'), backgroundColor: Colors.red,));
     }
   }
 
@@ -123,7 +123,7 @@ class _PostScreenState extends State<PostScreen> {
     if (token == null) {
       setState(() {
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 삭제에 실패했습니다.(로그인 만료)')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 삭제에 실패했습니다.(로그인 만료)'), backgroundColor: Colors.red,));
       });
       return;
     }
@@ -135,16 +135,16 @@ class _PostScreenState extends State<PostScreen> {
       },
     );
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 삭제되었습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 삭제되었습니다.'), backgroundColor: Colors.green,));
       setState(() {
         comments = fetchComments();
       });
     }
     else if (response.statusCode == 300){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('삭제 권한이 없습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('삭제 권한이 없습니다.'), backgroundColor: Colors.red,));
     }
     else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 삭제에 실패했습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 삭제에 실패했습니다.'), backgroundColor: Colors.red,));
     }
   }
 
@@ -156,7 +156,7 @@ class _PostScreenState extends State<PostScreen> {
     if (token == null) {
       setState(() {
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 수정에 실패했습니다.(로그인 만료)')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 수정에 실패했습니다.(로그인 만료)'), backgroundColor: Colors.red,));
       });
       return;
     }
@@ -171,16 +171,16 @@ class _PostScreenState extends State<PostScreen> {
       }),
     );
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 수정되었습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글이 수정되었습니다.'), backgroundColor: Colors.green,));
       setState(() {
         comments = fetchComments();
       });
     }
     else if (response.statusCode == 300){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('수정 권한이 없습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('수정 권한이 없습니다.'), backgroundColor: Colors.red,));
     }
     else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 수정에 실패했습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('댓글 수정에 실패했습니다.'), backgroundColor: Colors.red,));
     }
   }
 
@@ -247,7 +247,7 @@ class _PostScreenState extends State<PostScreen> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('게시글 수정에 실패 했습니다.(로그인 만료)')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('게시글 수정에 실패 했습니다.(로그인 만료)'), backgroundColor: Colors.red,));
       });
       return;
     }
@@ -276,7 +276,7 @@ class _PostScreenState extends State<PostScreen> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('게시글 삭제에 실패했습니다. (로그인 만료)')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('게시글 삭제에 실패했습니다. (로그인 만료)'), backgroundColor: Colors.red,));
       });
       return;
     }

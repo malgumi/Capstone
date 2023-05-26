@@ -47,6 +47,52 @@ class _MyDrawerState extends State<MyDrawer> {
   String? _accountName;
   String? _accountEmail;
   String? _accountPermission;
+
+  void sendFeedback(String feedbackText) async {
+    setState(() => _isLoading = true);
+
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('정보를 받아올 수 없습니다. (로그인 만료)'), backgroundColor: Colors.red,),
+        );
+      });
+      return;
+    }
+
+    final Map<String, dynamic> postData = {
+      'board_id': 90, // 게시판 ID를 적절히 설정하세요.
+      'post_title': feedbackText,
+      'post_content': '',
+    };
+
+    final response = await http.post(
+      Uri.parse('http://3.39.88.187:3000/post/write'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+      body: jsonEncode(postData),
+    );
+
+    if (response.statusCode == 201) {
+      // Success
+      Navigator.pop(context, true);
+    } else {
+      // Failure
+      final responseData = jsonDecode(response.body);
+      setState(() {
+        _isLoading = false;
+        _errorMessage = responseData['message'];
+      });
+    }
+  }
+
+
   void _studentinfo() async {
 
     setState(() => _isLoading = true);
@@ -58,7 +104,7 @@ class _MyDrawerState extends State<MyDrawer> {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('정보를 받아올 수 없습니다. (로그인 만료)')));
+            .showSnackBar(SnackBar(content: Text('정보를 받아올 수 없습니다. (로그인 만료)'), backgroundColor: Colors.red,));
       });
       return;
     }
@@ -316,6 +362,71 @@ class _MyDrawerState extends State<MyDrawer> {
               ],
             ),
 
+          ),
+          ListTile(
+            leading: Icon(Icons.feedback, color: Colors.grey[800]),
+            title: Text('피드백'),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  String feedbackText = ''; // 피드백 텍스트를 저장할 변수
+
+                  return AlertDialog(
+                    title: Text('피드백 보내기'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            hintText: '피드백 작성',
+                          ),
+                          textInputAction: TextInputAction.newline, // 엔터를 눌렀을 때 다음 줄로 이동
+                          maxLines: null,
+                          onChanged: (value) {
+                            feedbackText = value; // 텍스트 필드 값이 변경될 때마다 변수에 저장
+                          },
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: Text('취소'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text('보내기'),
+                        onPressed: () {
+                          // 피드백 보내기 로직을 여기에 구현하세요.
+                          // feedbackText 변수에 텍스트 필드의 값이 저장되어 있습니다.
+                          // 예를 들어, sendFeedback 함수를 호출하여 피드백을 처리한다면:
+                           sendFeedback(feedbackText);
+
+                           Navigator.of(context).pop(); // 팝업 창 닫기
+
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             SnackBar(
+                               content: Text(
+                                 '피드백이 성공적으로 전송되었습니다.',
+                                 style: TextStyle(
+                                   color: Colors.white,
+                                   fontSize: 16.0,
+                                 ),
+                               ),
+                               backgroundColor: Colors.green, // 배경색 설정
+                               duration: Duration(seconds: 3), // 표시 시간 설정
+
+                             ),
+                           );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
           ListTile(
             leading: Icon(Icons.logout, color: Colors.grey[800]),
