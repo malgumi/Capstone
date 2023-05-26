@@ -295,6 +295,23 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  String? _profileIntroduction;
+
+  Future<void> _fetchProfile(String studentId) async {
+    final response = await http.get(
+      Uri.parse('http://3.39.88.187:3000/user/info?student_id=$studentId'),
+    );
+    if (response.statusCode == 201) {
+      final responseData = jsonDecode(response.body);
+      setState(() {
+        _profileIntroduction = responseData[0]['introduction'];
+      });
+    } else {
+      throw Exception('Failed to load profile information');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -421,6 +438,7 @@ class _PostScreenState extends State<PostScreen> {
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+
                               children: [
                                 widget.post['board_id'] == 1
                                     ? Text(
@@ -429,12 +447,49 @@ class _PostScreenState extends State<PostScreen> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 )
-                                    : Text(
-                                  snapshot.data![index]['student_id'].toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    : GestureDetector(
+                                  onTap: () {
+                                    final studentId = snapshot.data![index]['student_id'].toString();
+                                    _fetchProfile(studentId).then((_) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('프로필 보기'),
+                                            content: Text(_profileIntroduction ?? '프로필 내용이 없습니다.'),
+                                            actions: [
+                                              TextButton(
+                                                child: Text('닫기'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      SizedBox(width: 5),
+                                      Text(
+                                        snapshot.data![index]['student_id'].toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Icon(
+                                        Icons.person,
+                                        color: Colors.blue,
+                                      ),
+                                    ],
                                   ),
                                 ),
+
+
+
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
