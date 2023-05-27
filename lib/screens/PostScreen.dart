@@ -314,6 +314,9 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime postDateTime = DateTime.parse(widget.post['post_date']);
+    DateTime updatedDateTime = postDateTime.add(Duration(hours: 9));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -391,7 +394,7 @@ class _PostScreenState extends State<PostScreen> {
                     ),
                   ),
                   Text(
-                    DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(widget.post['post_date'])),
+                    DateFormat('yyyy-MM-dd HH:mm:ss').format(updatedDateTime),
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,
@@ -419,6 +422,7 @@ class _PostScreenState extends State<PostScreen> {
                 future: comments,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+
                     if (snapshot.data!.isEmpty) {
                       return Center(
                         child: Text(
@@ -434,6 +438,8 @@ class _PostScreenState extends State<PostScreen> {
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
+                          DateTime commetDateTime = DateTime.parse(snapshot.data![index]['comment_date']);
+                          DateTime commetupdatedDateTime = commetDateTime.add(Duration(hours: 9));
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Column(
@@ -514,8 +520,9 @@ class _PostScreenState extends State<PostScreen> {
                                     ),
                                   ],
                                 ),
+
                                 Text(
-                                  DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(snapshot.data![index]['comment_date'])),
+                                  DateFormat('yyyy-MM-dd HH:mm:ss').format(commetupdatedDateTime),
                                   style: TextStyle(
                                     fontSize: 12.0,
                                     color: Colors.grey,

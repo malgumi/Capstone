@@ -71,7 +71,10 @@ class _MyPostState extends State<MyPost> {
 
 
   Widget _buildPostItem(BuildContext context, dynamic post) {
+    DateTime postDateTime = DateTime.parse(post['post_date']);
+    DateTime updatedDateTime = postDateTime.add(Duration(hours: 9));
     return GestureDetector(
+
       onTap: () async {
         await Navigator.push(
           context,
@@ -140,7 +143,7 @@ class _MyPostState extends State<MyPost> {
                   ),
                   Text(
                     DateFormat('yyyy-MM-dd HH:mm:ss')
-                        .format(DateTime.parse(post['post_date'])),
+                        .format(updatedDateTime),
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,
