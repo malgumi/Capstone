@@ -6,6 +6,7 @@ import 'package:capstone/screens/profile.dart';
 import 'package:capstone/screens/drawer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'firebase_options.dart';
 
 @pragma('vm:entry-point')
@@ -16,7 +17,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   print("Handling a background message: ${message.messageId}");
 }
-
+void logout(BuildContext context) async {
+  final storage = new FlutterSecureStorage();
+  await storage.delete(key: 'token');
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false,
+  );
+}
 void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   WidgetsFlutterBinding.ensureInitialized();
@@ -121,6 +130,22 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text(
                 '로그인',
+                style: TextStyle(fontSize: 20),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+                backgroundColor: Color(0xffC1D3FF),
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+
+                  logout(context);
+
+              },
+              child: Text(
+                '로그아웃',
                 style: TextStyle(fontSize: 20),
               ),
               style: ElevatedButton.styleFrom(

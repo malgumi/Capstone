@@ -440,7 +440,7 @@ class _PostScreenState extends State<PostScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
 
                               children: [
-                                widget.post['board_id'] == 1
+                                widget.post['board_id'] == 1 || widget.post['board_id'] == 4
                                     ? Text(
                                   snapshot.data![index]['student_id'].toString().substring(2, 4) + '학번',
                                   style: TextStyle(
@@ -487,6 +487,7 @@ class _PostScreenState extends State<PostScreen> {
                                     ],
                                   ),
                                 ),
+
 
 
 
