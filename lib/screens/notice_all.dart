@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:capstone/screens/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -233,6 +234,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen> {
         centerTitle: true,
         backgroundColor: Color(0xffC1D3FF),
       ),
+      drawer: MyDrawer(),
       backgroundColor: Colors.white,
 
       body: Container(
