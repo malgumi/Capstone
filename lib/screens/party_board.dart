@@ -39,7 +39,7 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
     }
   }
 
-  void _filterPosts(String keyword) async {
+  void filterPosts(String keyword) async {
     allPosts = await _jobposts;
     _filteredPosts = allPosts.where((post) {
       final title = post['post_title'].toLowerCase();
@@ -165,7 +165,7 @@ class _FreeBoardScreenState extends State<PartyBoardScreen> {
                 IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
-                    _filterPosts(_searchController.text);
+                    filterPosts(_searchController.text);
                   },
                 ),
               ],
