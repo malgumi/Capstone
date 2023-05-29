@@ -337,11 +337,40 @@ class _PostScreenState extends State<PostScreen> {
           ),
           IconButton(
             onPressed: () async {
-              await deletePost();
-              Navigator.pop(context);
+              bool confirmDelete = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('게시글 삭제'),
+                    content: Text('게시글을 삭제 하시겠습니까?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('취소'),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      TextButton(
+                        child: Text('삭제'),
+                        onPressed: () async {
+                          await deletePost();
+                          Navigator.pop(context, true); // 게시글 삭제 후 true 값을 반환하여 나가도록 함
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (confirmDelete == true) {
+                await deletePost();
+                Navigator.pop(context); // true 값을 받은 경우 게시글 삭제 후 나가도록 함
+              }
             },
             icon: Icon(Icons.delete),
           ),
+
+
         ],
       ),
       body: SingleChildScrollView(
@@ -516,8 +545,38 @@ class _PostScreenState extends State<PostScreen> {
                                       icon: Icon(Icons.cancel_outlined),
                                       iconSize: 18,
                                       color: Colors.grey,
-                                      onPressed: () => _deleteComment(snapshot.data![index]['comment_id']),
+                                      onPressed: () async {
+                                        bool confirmDelete = await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text('댓글 삭제'),
+                                              content: Text('댓글을 삭제 하시겠습니까?'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('취소'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop(false);
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text('삭제'),
+                                                  onPressed: (){
+                                                    _deleteComment(snapshot.data![index]['comment_id']);
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+
+                                        if (confirmDelete == true) {
+                                          _deleteComment(snapshot.data![index]['comment_id']);
+                                        }
+                                      },
                                     ),
+
                                   ],
                                 ),
 
