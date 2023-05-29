@@ -62,9 +62,6 @@ class _PostScreenState extends State<PostScreen> {
       throw Exception('Failed to load board');
     }
   }
-
-
-
   //댓글 가져오기
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(Uri.parse(
@@ -296,6 +293,22 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  Future<void> reportPost() async{
+    final response = await http.post(
+      Uri.parse('http://3.39.88.187:3000/post/reportPost/${widget.post['post_id']}'),
+    );
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('신고가 접수되었습니다.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      throw Exception('Failed to report Post.');
+    }
+  }
+
   String? _profileIntroduction;
 
   Future<void> _fetchProfile(String studentId) async {
@@ -383,17 +396,13 @@ class _PostScreenState extends State<PostScreen> {
         elevation: 0.0,
         actions: [
           IconButton(
-            onPressed: _navigateToEditPostScreen,
-            icon: Icon(Icons.edit),
-          ),
-          IconButton(
             onPressed: () async {
-              bool confirmDelete = await showDialog(
+              bool confirmReport = await showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('게시글 삭제'),
-                    content: Text('게시글을 삭제 하시겠습니까?'),
+                    title: Text('게시글 신고'),
+                    content: Text('게시글을 신고 하시겠습니까?'),
                     actions: <Widget>[
                       TextButton(
                         child: Text('취소'),
@@ -402,25 +411,60 @@ class _PostScreenState extends State<PostScreen> {
                         },
                       ),
                       TextButton(
-                        child: Text('삭제'),
+                        child: Text('신고'),
                         onPressed: () async {
-                          await deletePost();
-                          Navigator.pop(context, true); // 게시글 삭제 후 true 값을 반환하여 나가도록 함
+                          await reportPost();
+                          Navigator.pop(context, true);
                         },
                       ),
                     ],
                   );
                 },
               );
-
-              if (confirmDelete == true) {
-                await deletePost();
-                Navigator.pop(context); // true 값을 받은 경우 게시글 삭제 후 나가도록 함
-              }
             },
-            icon: Icon(Icons.delete),
+            icon: Icon(Icons.report_gmailerrorred),
           ),
 
+          if (isPostAuthor) // 게시글 작성자인 경우에만 보여주기
+            IconButton(
+              onPressed: _navigateToEditPostScreen,
+              icon: Icon(Icons.edit),
+            ),
+          if (isPostAuthor) // 게시글 작성자인 경우에만 보여주기
+            IconButton(
+              onPressed: () async {
+                bool confirmDelete = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('게시글 삭제'),
+                      content: Text('게시글을 삭제 하시겠습니까?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('취소'),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                        TextButton(
+                          child: Text('삭제'),
+                          onPressed: () async {
+                            await deletePost();
+                            Navigator.pop(context, true); // 게시글 삭제 후 true 값을 반환하여 나가도록 함
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                if (confirmDelete == true) {
+                  await deletePost();
+                  Navigator.pop(context); // true 값을 받은 경우 게시글 삭제 후 나가도록 함
+                }
+              },
+              icon: Icon(Icons.delete),
+            ),
 
         ],
       ),
