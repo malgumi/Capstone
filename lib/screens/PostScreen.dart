@@ -27,6 +27,7 @@ class _PostScreenState extends State<PostScreen> {
     comments = fetchComments();
     _fetchboard();
     _fetchintroduction();
+    _checkPostAuthor();
   }
 
   String? _boardName;
@@ -310,7 +311,57 @@ class _PostScreenState extends State<PostScreen> {
       throw Exception('Failed to load profile information');
     }
   }
+  // 게시글 작성자 여부 확인을 위한 변수
+  bool isPostAuthor = false;
+  String? Permission;
+// 사용자 정보를 가져오고 게시글 작성자인지 확인하는 메서드
+  void _checkPostAuthor() async {
+    String studentId;
+    setState(() => _isLoading = true);
 
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = '토큰이 없습니다.';
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('게시글 작성에 실패했습니다. (로그인 만료)')));
+      });
+      return;
+    }
+    final response = await http.get(
+      Uri.parse('http://3.39.88.187:3000/user/student'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token,
+      },
+    );
+    if (response.statusCode == 201) {
+      final responseData = jsonDecode(response.body);
+      studentId = responseData[0]['student_id'].toString();
+      Permission = responseData[0]['permission'].toString();
+      if (studentId == widget.post['student_id'].toString()) {
+        setState(() {
+          isPostAuthor = true;
+        });
+      }
+      else if(Permission == '2' || Permission == '3'){
+        isPostAuthor = true;
+      }
+    }
+    else {
+      // Failure
+      setState(() {
+        final responseData = jsonDecode(response.body);
+
+        _isLoading = false;
+        _errorMessage = responseData['message'];
+      });
+    }
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
