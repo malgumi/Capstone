@@ -47,6 +47,18 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
     }
   }
 
+  Future<void> _refreshPosts() async {
+    setState(() {
+      _posts = _fetchPosts();
+    });
+  }
+
+  Future<void> _refreshReportPosts() async {
+    setState(() {
+      _reportPosts = _fetchReportPosts();
+    });
+  }
+
   Widget _buildPostItem(BuildContext context, dynamic post) {
     DateTime postDateTime = DateTime.parse(post['post_date']);
     DateTime updatedDateTime = postDateTime.add(Duration(hours: 9));
@@ -58,12 +70,10 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
             builder: (context) => PostScreen(post: post),
           ),
         );
-        setState(() {
-          _posts = _fetchPosts();
-        });
+        _refreshPosts();
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0), // 가로 padding 추가
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
         child: Container(
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
@@ -128,13 +138,6 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
         onTap: onPressed,
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border(
-              left: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.0),
-              right: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1.0),
-            ),
-          ),
           child: Center(child: child),
         ),
       ),
@@ -160,7 +163,7 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
           elevation: 0.0,
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.label,
-            labelColor: Colors.purple,
+            labelColor: Colors.blueAccent,
             unselectedLabelColor: Colors.grey,
             tabs: [
               Tab(
@@ -175,47 +178,53 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
         drawer: MyDrawer(),
         body: TabBarView(
           children: [
-            FutureBuilder<List<dynamic>>(
-              future: _posts,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final posts = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      return _buildPostItem(context, posts[index]);
-                    },
-                  );
-                } else if (snapshot.hasError) {
+            RefreshIndicator(
+              onRefresh: _refreshPosts,
+              child: FutureBuilder<List<dynamic>>(
+                future: _posts,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final posts = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        return _buildPostItem(context, posts[index]);
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  }
                   return Center(
-                    child: Text('${snapshot.error}'),
+                    child: CircularProgressIndicator(),
                   );
-                }
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+                },
+              ),
             ),
-            FutureBuilder<List<dynamic>>(
-              future: _reportPosts,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final reportPosts = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: reportPosts.length,
-                    itemBuilder: (context, index) {
-                      return _buildPostItem(context, reportPosts[index]);
-                    },
-                  );
-                } else if (snapshot.hasError) {
+            RefreshIndicator(
+              onRefresh: _refreshReportPosts,
+              child: FutureBuilder<List<dynamic>>(
+                future: _reportPosts,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final reportPosts = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: reportPosts.length,
+                      itemBuilder: (context, index) {
+                        return _buildPostItem(context, reportPosts[index]);
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  }
                   return Center(
-                    child: Text('${snapshot.error}'),
+                    child: CircularProgressIndicator(),
                   );
-                }
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+                },
+              ),
             ),
           ],
         ),
