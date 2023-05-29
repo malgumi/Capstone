@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:capstone/screens/WritePostScreen.dart';
-import 'package:capstone/screens/PostScreen.dart';
+import 'package:capstone/screens/post/WritePostScreen.dart';
+import 'package:capstone/screens/post/PostScreen.dart';
 import 'package:intl/intl.dart';
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -39,7 +39,7 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
     }
   }
 
-  void filterPosts(String keyword) async {
+  void _filterPosts(String keyword) async {
     allPosts = await _jobposts;
     _filteredPosts = allPosts.where((post) {
       final title = post['post_title'].toLowerCase();
@@ -56,13 +56,16 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
     DateTime postDateTime = DateTime.parse(post['post_date']);
     DateTime updatedDateTime = postDateTime.add(Duration(hours: 9));
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PostScreen(post: post),
           ),
         );
+        setState(() {
+          _jobposts = fetchPosts();
+        });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -165,7 +168,7 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
                 IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
-                    filterPosts(_searchController.text);
+                    _filterPosts(_searchController.text);
                   },
                 ),
               ],
