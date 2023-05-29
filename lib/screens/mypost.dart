@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/PostScreen.dart';
 import 'package:intl/intl.dart';
-import 'package:capstone/screens/drawer.dart';
 void main() {
   runApp(MaterialApp(
     title: '내가 쓴 글',
@@ -66,10 +65,6 @@ class _MyPostState extends State<MyPost> {
       throw Exception('Failed to load comments count');
     }
   }
-
-
-
-
   Widget _buildPostItem(BuildContext context, dynamic post) {
     if (post['board_id'] == 99 || post['board_id'] == 90 || post['board_id'] == 3 || post['board_id'] == 5 || post['board_id'] == 6 || post['board_id'] == 7 || post['board_id'] == 8) {
       return SizedBox(); // 빈 SizedBox 반환하여 해당 게시물을 보여주지 않음
@@ -159,12 +154,6 @@ class _MyPostState extends State<MyPost> {
       ),
     );
   }
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

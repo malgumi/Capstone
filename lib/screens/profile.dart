@@ -6,11 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 
-import 'drawer.dart';
-
-
-
-
 class Profile extends StatefulWidget {
   @override
   _ProfileState createState() => _ProfileState();
