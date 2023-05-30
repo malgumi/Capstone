@@ -21,14 +21,13 @@ class _ProfileState extends State<Profile> {
     super.initState();
     _studentinfo();
   }
+
   String? _accountId;
   String? _accountName;
   String? _accountEmail;
   String? _accountIntroduction;
 
-
   void _studentinfo() async {
-
     setState(() => _isLoading = true);
 
     final storage = FlutterSecureStorage();
@@ -42,7 +41,6 @@ class _ProfileState extends State<Profile> {
       });
       return;
     }
-
 
     final response = await http.get(
       Uri.parse('http://3.39.88.187:3000/user/student'),
@@ -72,6 +70,54 @@ class _ProfileState extends State<Profile> {
       });
     }
   }
+  void gradeupdate(int grade) async {
+
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'token');
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('토큰이 없습니다.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+
+
+    // Send grade update request
+    final response = await http.post(
+      Uri.parse('http://3.39.88.187:3000/user/grade'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token
+      },
+      body: jsonEncode(<String, int>{
+        'grade': grade,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      // Grade update success
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('학년이 변경되었습니다.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pop();
+    } else {
+      // Grade update failed
+      final responseData = jsonDecode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(responseData['message']),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   Future<void> _editIntroduction(String introduction) async {
     final url = Uri.parse('http://3.39.88.187:3000/post/introduction');
@@ -80,31 +126,51 @@ class _ProfileState extends State<Profile> {
     if (token == null) {
       setState(() {
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('자기소개 수정에 실패했습니다.(로그인 만료)')));
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('자기소개 수정에 실패했습니다. (로그인 만료)'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
+
     final response = await http.post(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
       },
-      body: jsonEncode( {
+      body: jsonEncode({
         'introduction': introduction,
       }),
     );
+
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('자기소개 수정이 수정되었습니다.')));
       setState(() {
         _accountIntroduction = introduction;
       });
-    }
-    else if (response.statusCode == 300){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('수정 권한이 없습니다.')));
-    }
-    else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('자기소개 수정에 실패했습니다.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('정보가 수정되었습니다.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else if (response.statusCode == 300) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('수정 권한이 없습니다.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('정보 수정에 실패했습니다.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -113,6 +179,7 @@ class _ProfileState extends State<Profile> {
     String introductionText = '';
     TextEditingController _controller = TextEditingController();
     _controller.text = _accountIntroduction ?? '';
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -136,113 +203,207 @@ class _ProfileState extends State<Profile> {
                   if (_accountName != null)
                     Text(
                       _accountName!,
-                      style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
-
-
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: FloatingActionButton.extended(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ChangePasswordDialog();
-                              },
-                            );
-                          },
-                          heroTag: 'changePassword',
-                          tooltip: '비밀번호 변경',
-                          elevation: 0,
-                          label: const Text("비밀번호 변경", style: TextStyle(fontSize: 12),),
-                          icon: const Icon(Icons.lock, size: 15,),
-                        ),
-                      ),
-                      const SizedBox(width: 16.0),
-                      Expanded(
-                        child: FloatingActionButton.extended(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => MyPost()),
-                            );
-                          },
-                          heroTag: 'mesage',
-                          elevation: 0,
-                          backgroundColor: Colors.red,
-                          label: const Text("내가 쓴 글", style: TextStyle(fontSize: 12),),
-                          icon: const Icon(Icons.message_rounded, size: 15, ),
-                        ),
-                      ),
-                      const SizedBox(width: 16.0),
-                      Expanded(
-                        child: FloatingActionButton.extended(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("자기소개 수정"),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      TextField(
-                                        controller: _controller,
-                                        onChanged: (value) {
-                                          introductionText = value; // 텍스트 필드의 값을 변수에 저장
-                                        },
-                                        decoration: InputDecoration(
-                                          labelText: "자기소개",
-                                          hintText: "자기소개를 입력해주세요",
-                                        ),
-                                        textInputAction: TextInputAction.newline, // 엔터를 눌렀을 때 다음 줄로 이동
-                                        maxLines: null, // 텍스트 필드의 크기를 자동으로 조정하여 여러 줄 입력 가능
-                                      ),
-                                    ],
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 110),
+                          child: FloatingActionButton.extended(
+                            onPressed: () {
+                              showMenu(
+                                context: context,
+                                position: RelativeRect.fromLTRB(
+                                  MediaQuery.of(context).size.width / 2 - 100,
+                                  MediaQuery.of(context).size.height / 1.8 - 100,
+                                  MediaQuery.of(context).size.width / 2 - 100,
+                                  MediaQuery.of(context).size.height / 1.8 - 100,
+                                ),
+                                items: [
+                                  PopupMenuItem<String>(
+                                    value: 'changePassword',
+                                    child: ListTile(
+                                      leading: Icon(Icons.lock),
+                                      title: Text('비밀번호 변경'),
+                                    ),
                                   ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context); // 팝업 창 닫기
-                                      },
-                                      child: Text("취소"),
+                                  PopupMenuItem<String>(
+                                    value: 'changeGrade',
+                                    child: ListTile(
+                                      leading: Icon(Icons.lock),
+                                      title: Text('학년 수정'),
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        // 수정 로직을 추가하세요.
-                                        // introductionText 변수에 저장된 자기소개 내용을 사용하여 처리
-                                        _editIntroduction(introductionText); // 자기소개 수정 API 호출
-                                        Navigator.pop(context); // 팝업 창 닫기
-                                      },
-                                      child: Text("저장"),
+                                  ),
+                                  PopupMenuItem<String>(
+                                    value: 'editIntroduction',
+                                    child: ListTile(
+                                      leading: Icon(Icons.edit),
+                                      title: Text('자기소개 수정'),
                                     ),
+                                  ),
+                                  PopupMenuItem<String>(
+                                    value: 'myPosts',
+                                    child: ListTile(
+                                      leading: Icon(Icons.article),
+                                      title: Text('내가 쓴 글'),
+                                    ),
+                                  ),
+                                ],
+                              ).then((selectedValue) {
+                                if (selectedValue == 'changePassword') {
+                                  // 비밀번호 변경 동작
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return ChangePasswordDialog();
+                                    },
+                                  );
+                                }
+                                else if (selectedValue == 'changeGrade') {
+                                  String selectedGrade = '1학년'; // 선택된 학년을 저장할 변수
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return StatefulBuilder(
+                                        builder: (BuildContext context, StateSetter setState) {
+                                          return AlertDialog(
+                                            title: Text("학년 변경"),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text("학년을 선택하세요"),
+                                                DropdownButton<String>(
+                                                  value: selectedGrade,
+                                                  onChanged: (String? newValue) {
+                                                    setState(() {
+                                                      selectedGrade = newValue!;
+                                                    });
+                                                  },
+                                                  // 드롭다운 버튼의 학년 목록
+                                                  items: <String>['1학년', '2학년', '3학년', '4학년'].map<DropdownMenuItem<String>>((String value) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  int grade;
+                                                  if (selectedGrade == '1학년') {
+                                                    grade = 1;
+                                                  } else if (selectedGrade == '2학년') {
+                                                    grade = 2;
+                                                  } else if (selectedGrade == '3학년') {
+                                                    grade = 3;
+                                                  } else if (selectedGrade == '4학년'){
+                                                    grade = 4;
+                                                  }
+                                                  else {
+                                                    // 예외 처리
+                                                    return;
+                                                  }
+                                                  gradeupdate(grade); // 선택한 학년 값으로 수정하여 호출
+                                                },
+                                                child: Text("확인"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
 
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          heroTag: 'Introduction',
-                          elevation: 0,
-                          backgroundColor: Colors.lightGreen,
-                          label: const Text("자기소개 수정", style: TextStyle(fontSize: 12),),
-                          icon: const Icon(Icons.edit, size: 15,),
+                                }
+                                else if (selectedValue ==
+                                    'editIntroduction') {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      String? introductionText;
+
+                                      TextEditingController _introductionController = TextEditingController();
+                                      if (_accountIntroduction != null) {
+                                        introductionText = _accountIntroduction;
+                                        _introductionController.text = _accountIntroduction!;
+                                      } else {
+                                        introductionText = '연락처\n-\n\n선호언어\n-\n\n개발기술\n-\n\n개인 홈페이지 링크(깃허브, 블로그 등)\n-\n\n한줄 소개\n-\n\n';
+                                        _introductionController.text = introductionText;
+                                      }
+
+                                      return AlertDialog(
+                                        title: Text("정보 수정"),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            TextFormField(
+                                              controller: _introductionController,
+                                              onChanged: (value) {
+                                                introductionText = value;
+                                              },
+                                              decoration: InputDecoration(
+                                                labelText: "자기소개",
+                                                hintText: "자기소개를 입력해주세요",
+                                              ),
+                                              maxLines: 15,
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("취소"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              _editIntroduction(introductionText!);
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("저장"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+
+                                } else if (selectedValue == 'myPosts') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MyPost()),
+                                  );
+                                }
+                              });
+                            },
+                            heroTag: 'changePassword',
+                            tooltip: '메뉴',
+                            elevation: 0,
+                            label: const Text("메뉴"),
+                            icon: const Icon(Icons.menu),
+                            backgroundColor: Colors.lightBlueAccent,
+                          ),
                         ),
                       ),
-
                     ],
                   ),
-
                   const SizedBox(height: 20),
-
                   Flexible(
                     child: SingleChildScrollView(
                       child: Container(
                         width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: Colors.white,
@@ -260,7 +421,8 @@ class _ProfileState extends State<Profile> {
                           children: [
                             const Text(
                               '자기소개',
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 10),
                             Text(
@@ -275,7 +437,6 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -291,8 +452,6 @@ class _TopPortion extends StatefulWidget {
 
   @override
   _TopPortionState createState() => _TopPortionState();
-
-
 }
 
 class _TopPortionState extends State<_TopPortion> {
@@ -305,9 +464,10 @@ class _TopPortionState extends State<_TopPortion> {
     super.initState();
     _studentinfo();
   }
-  String? _accountId;
-  void _studentinfo() async {
 
+  String? _accountId;
+
+  void _studentinfo() async {
     setState(() => _isLoading = true);
 
     final storage = FlutterSecureStorage();
@@ -321,7 +481,6 @@ class _TopPortionState extends State<_TopPortion> {
       });
       return;
     }
-
 
     final response = await http.get(
       Uri.parse('http://3.39.88.187:3000/user/student'),
@@ -359,9 +518,10 @@ class _TopPortionState extends State<_TopPortion> {
     final String fileName = _accountId != null ? _accountId! + '.png' : '';
     final bytes = await image.readAsBytes();
 
-    final request =
-    http.MultipartRequest('POST', Uri.parse('http://3.39.88.187:3000/user/upload'));
-    request.files.add(http.MultipartFile.fromBytes('image', bytes, filename: fileName));
+    final request = http.MultipartRequest(
+        'POST', Uri.parse('http://3.39.88.187:3000/user/upload'));
+    request.files
+        .add(http.MultipartFile.fromBytes('image', bytes, filename: fileName));
     final response = await request.send();
 
     if (response.statusCode == 201) {
@@ -374,7 +534,6 @@ class _TopPortionState extends State<_TopPortion> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -409,7 +568,8 @@ class _TopPortionState extends State<_TopPortion> {
                   child: Image.network(
                     'http://3.39.88.187:3000/user/loding?image=$fileName',
                     fit: BoxFit.cover,
-                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    errorBuilder: (BuildContext context, Object exception,
+                        StackTrace? stackTrace) {
                       return Image.asset(
                         'assets/profile.png',
                         fit: BoxFit.cover,
@@ -435,14 +595,10 @@ class _TopPortionState extends State<_TopPortion> {
             ),
           ),
         )
-
       ],
     );
   }
 }
-
-
-
 
 class ChangePasswordDialog extends StatefulWidget {
   @override
@@ -457,7 +613,6 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
   late final TextEditingController _newPasswordController;
   late final TextEditingController _confirmPasswordController;
 
-
   @override
   void initState() {
     super.initState();
@@ -465,11 +620,11 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     _currentPasswordController = TextEditingController();
     _newPasswordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
-
   }
-  String? _accountPassword;
-  void _studentinfo() async {
 
+  String? _accountPassword;
+
+  void _studentinfo() async {
     setState(() => _isLoading = true);
 
     final storage = FlutterSecureStorage();
@@ -478,12 +633,13 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('비밀번호 변경에 실패했습니다. (로그인 만료)'), backgroundColor: Colors.red,));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('비밀번호 변경에 실패했습니다. (로그인 만료)'),
+          backgroundColor: Colors.red,
+        ));
       });
       return;
     }
-
 
     final response = await http.get(
       Uri.parse('http://3.39.88.187:3000/user/student'),
@@ -499,9 +655,6 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
       final responseData = jsonDecode(response.body);
       setState(() {
         _accountPassword = responseData[0]['password'];
-
-
-
       });
     } else {
       // Failure
@@ -531,23 +684,6 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // TextFormField(
-            //   controller: _currentPasswordController,
-            //   obscureText: true,
-            //   decoration: InputDecoration(
-            //     labelText: '현재 비밀번호',
-            //   ),
-            //   validator: (value) {
-            //     if (value!.isEmpty) {
-            //       return '현재 비밀번호를 입력하세요.';
-            //     }
-            //     if(value != _accountPassword){
-            //       print(_accountPassword);
-            //       return '비밀번호가 일치하지 않습니다';
-            //     }
-            //
-            //   },
-            // ),
             TextFormField(
               controller: _newPasswordController,
               obscureText: true,
@@ -560,8 +696,9 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                 } else if (value.length < 8) {
                   return "비밀번호는 8자 이상이어야 합니다";
                 } else if (!RegExp(
-                    r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$')
-                    .hasMatch(value) || value.contains('?')) {
+                            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$')
+                        .hasMatch(value) ||
+                    value.contains('?')) {
                   return "비밀번호는 대문자, 소문자, 숫자, 특수문자를\n포함하며 '?' 문자를 사용할 수 없습니다";
                 }
                 return null;
@@ -623,14 +760,20 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               if (response.statusCode == 201) {
                 // Password change success
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('비밀번호가 변경되었습니다.'), backgroundColor: Colors.green,),
+                  SnackBar(
+                    content: Text('비밀번호가 변경되었습니다.'),
+                    backgroundColor: Colors.green,
+                  ),
                 );
                 Navigator.of(context).pop();
               } else {
                 // Password change failed
                 final responseData = jsonDecode(response.body);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(responseData['message']), backgroundColor: Colors.red,),
+                  SnackBar(
+                    content: Text(responseData['message']),
+                    backgroundColor: Colors.red,
+                  ),
                 );
               }
             }
@@ -641,4 +784,3 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     );
   }
 }
-
