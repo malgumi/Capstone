@@ -3,16 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+
 import 'package:capstone/screens/gScore/gscore_list_screen.dart';
 import 'package:capstone/screens/gScore/gscore_self_calc_screen.dart';
 
 
-class MyScorePage extends StatefulWidget {
+
+class searchScorePage extends StatefulWidget {
+
+  final String student_id;
+
+  searchScorePage({required this.student_id});
+
   @override
-  State<MyScorePage> createState() => _MyScorePage();
+  State<searchScorePage> createState() => _searchScorePage();
 }
 
-class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
+class _searchScorePage extends State<searchScorePage> with TickerProviderStateMixin {
   final FlutterSecureStorage storage = FlutterSecureStorage();
   int sumScore = 0;
   String leftScore = '';
@@ -21,8 +28,8 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
   int i = 0;
   List<Map<String, dynamic>> maxScores = [];
   Map<String,int> Maxscore = {};
+  String studentid = '';
   Map<String, dynamic> allScore = {};
-  int student_id = 0;
   int? score = 0;
   Map<String, Map<String, int>>? details;
 
@@ -63,7 +70,7 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
       }
     }
     final response = await http.get(
-      Uri.parse('http://3.39.88.187:3000/gScore/user'),
+      Uri.parse('http://3.39.88.187:3000/gScore/getselUserInfo?student_id=${widget.student_id}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -74,12 +81,10 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
       final user = jsonDecode(response.body);
       final allScoreTemp = user['graduation_score'];
       final decodedAllScore = jsonDecode(allScoreTemp);
-      student_id = user['student_id'];
-
+      studentid = widget.student_id;
+      print(studentid);
       allScore.clear(); // 이전 값들을 제거하고 새로운 값을 저장
       allScore.addAll(decodedAllScore);
-      print(allScore);
-
       allScore.forEach((key, value) {
         if (maxScores.any((score) => score.containsKey(key))) {
           final maxScore = maxScores.firstWhere((score) =>
@@ -92,7 +97,6 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
       allScore.forEach((key, value) {
         sumScore += value as int;
       });
-
       _getdetails();
     }
 
@@ -109,6 +113,7 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
     });
   }
   Future<void> _getdetails() async {
+    details = null;
     final token = await storage.read(key: 'token');
 
     if (token == null) {
@@ -117,7 +122,7 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
 
     if (details == null) {
       final postData = {
-        'userId': student_id,
+        'userId': int.parse(studentid),
       };
 
       print(postData);
@@ -181,7 +186,7 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
             },
           ),
           title: Text(
-            '내 졸업인증점수',
+            '졸업인증점수',
             style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,
@@ -303,10 +308,11 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
                                         child: gScore_check(
                                           name: maxScores[j].keys.first,
                                           maxScore: maxScores[j].values.first,
-                                          studentid: student_id,
+                                          studentid: widget.student_id,
                                           allScore: allScore,
                                           score: score,
                                           details: details,
+
                                         ),
                                       ),
                                     ),
@@ -336,6 +342,7 @@ class _MyScorePage extends State<MyScorePage> with TickerProviderStateMixin {
   }
 }
 //floating border
+
 class gScore_check extends StatefulWidget {
   const gScore_check({
     Key? key,
@@ -349,7 +356,7 @@ class gScore_check extends StatefulWidget {
 
   final dynamic name;
   final dynamic maxScore;
-  final int studentid;
+  final String studentid;
   final Map<String, dynamic> allScore;
   final int? score;
   final Map<String, Map<String, int>>? details;

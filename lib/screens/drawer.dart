@@ -1,8 +1,12 @@
+import 'package:capstone/screens/completion/completed_subject_select.dart';
+import 'package:capstone/screens/completion/completion_status.dart';
 import 'package:capstone/screens/gScore/gscore_list_screen.dart';
 import 'package:capstone/screens/gScore/gscore_self_calc_screen.dart';
 import 'package:capstone/screens/gScore/gscore_myscore.dart';
+import 'package:capstone/screens/gScore/gscore_admin_check.dart';
 import 'package:capstone/screens/adminsingup.dart';
 import 'package:capstone/screens/profile.dart';
+import 'package:capstone/screens/feedbackpage.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/main.dart';
 import 'package:capstone/screens/party_board.dart';
@@ -13,11 +17,17 @@ import 'package:capstone/screens/QnA_board.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/notice.dart';
+import 'package:capstone/screens/prof/prof_profile.dart';
+import 'package:capstone/screens/gScore/gscore_admin_editor.dart';
+import 'package:capstone/screens/gScore/gscore_admin_list.dart';
+import 'package:capstone/screens/subject/MSmain.dart';
+import 'package:capstone/screens/subject/MSmain_ASS.dart';
 
-import 'feedbackpage.dart';
 
 class MyDrawer extends StatefulWidget {
+
   const MyDrawer({Key? key}) : super(key: key);
+
 
   @override
   _MyDrawerState createState() => _MyDrawerState();
@@ -25,6 +35,8 @@ class MyDrawer extends StatefulWidget {
 
 
 class _MyDrawerState extends State<MyDrawer> {
+  int? _userPermission; //추가
+
   String _errorMessage = '';
   bool _isLoading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -127,9 +139,8 @@ class _MyDrawerState extends State<MyDrawer> {
       setState(() {
         _accountName = responseData[0]['student_id'].toString();
         _accountEmail = responseData[0]['name'];
+        _userPermission = responseData[0]['permission']; // 추가
         _accountPermission = responseData[0]['permission'].toString();
-
-
       });
     } else {
       // Failure
@@ -251,7 +262,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   leading: Icon(Icons.home, color: Colors.grey[800]),
                   title: Text('홈'),
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => MyHomePage()),
                     );
@@ -265,7 +276,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       leading: Icon(Icons.announcement, color: Colors.grey[800]),
                       title: Text('공지사항'),
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => Notice()),
                         );
@@ -275,7 +286,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       leading: Icon(Icons.chat, color: Colors.grey[800]),
                       title: Text('구인구직 게시판'),
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => PartyBoardScreen()),
@@ -286,7 +297,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       leading: Icon(Icons.article, color: Colors.grey[800]),
                       title: Text('자유게시판'),
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => FreeBoardScreen()),
@@ -297,7 +308,7 @@ class _MyDrawerState extends State<MyDrawer> {
                       leading: Icon(Icons.article, color: Colors.grey[800]),
                       title: Text('Q&A게시판'),
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => QnABoardScreen()),
@@ -306,43 +317,99 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                   ],
                 ),
+                //이수현황 - 나의 이수현황, 이수과목선택
                 ExpansionTile(
-                  title: Text('졸업인증'),
-                  leading: Icon(Icons.subdirectory_arrow_left, color: Colors.grey[800]),
+                  title: Text('이수현황'),
+                  leading: Icon(
+                      Icons.add_task_rounded, color: Colors.grey[800]),
                   children: <Widget>[
                     ListTile(
-                      leading: Icon(Icons.subdirectory_arrow_left, color: Colors.grey[800]),
-                      title: Text('졸업점수 신청 및 내역'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GScoreForm()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.calculate, color: Colors.grey[800]),
-                      title: Text('졸업 점수 셀프 계산기'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SelfCalcScreen()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                        leading: Icon(Icons.person, color: Colors.grey[800]),
-                        title: Text('나의 졸업인증 점수'),
-                        onTap: (){
+                        leading: Icon(
+                            Icons.add_task_rounded, color: Colors.grey[800]),
+                        title: Text('나의 이수현황'),
+                        onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => MyScorePage()),
+                            MaterialPageRoute(builder: (context) =>
+                                CompletionStatusPage(
+                                  student_id: '',
+                                  grade: '',
+                                  major_type: '',
+                                )),
                           );
                         }
                     ),
-                  ]),
+                    ListTile(
+                      title: Text('이수과목 선택'),
+                      leading: Icon(
+                          Icons.assignment_turned_in_outlined,
+                          color: Colors.grey[800]
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>
+                              SubjectSelect(subjectId: 0),
+                        ));
+                      },
+                    )
+                  ],),
+
+                ExpansionTile(
+                    title: Text('졸업인증'),
+                    leading: Icon(Icons.school, color: Colors.grey[800]),
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.list, color: Colors.grey[800]),
+                        title: Text('졸업점수 신청 및 내역'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => GScoreForm()),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.calculate, color: Colors.grey[800]),
+                        title: Text('졸업 점수 셀프 계산기'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SelfCalcScreen()),
+                          );
+                        },
+                      ),
+                      ListTile(
+                          leading: Icon(Icons.person, color: Colors.grey[800]),
+                          title: Text('나의 졸업인증 점수'),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MyScorePage()),
+                            );
+                          }
+                      ),
+                    ]),
+
+                ExpansionTile(
+                    title: Text('과목정보'),
+                    leading: Icon(Icons.menu_book_rounded, color: Colors.grey[800]),
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.search, color: Colors.grey[800]),
+                        title: Text('전공과목 정보'),
+
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MSmain()),
+                          );
+                        },
+                      ),
+                    ]),
 
                 ListTile(
                     leading: Icon(Icons.person, color: Colors.grey[800]),
@@ -354,35 +421,84 @@ class _MyDrawerState extends State<MyDrawer> {
                       );
                     }
                 ),
-                _accountPermission == "2" ?
+
+                _accountPermission == "2" || _accountPermission == "3" ?
                 ExpansionTile(
-                title: Text('관리자 페이지'),
-                leading: Icon(Icons.subdirectory_arrow_left, color: Colors.grey[800]),
-                children: <Widget>[
-                  ListTile(
-                      leading: Icon(Icons.add, color: Colors.grey[800]),
-                      title: Text('교수 계정 생성'),
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUpPage()),
-                        );
-                      }
-                  ),
-                  ListTile(
-                      leading: Icon(Icons.dynamic_feed, color: Colors.grey[800]),
-                      title: Text('피드백 확인'),
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FeedBackScreen()),
-                        );
-                      }
-                  ),
-                ])
-                : Container(),
-
-
+                    title: Text('관리자 페이지'),
+                    leading: Icon(Icons.subdirectory_arrow_left, color: Colors.grey[800]),
+                    children: <Widget>[
+                      ListTile(
+                          leading: Icon(Icons.person_add, color: Colors.grey[800]),
+                          title: Text('교수 계정 생성'),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignUpPage()),
+                            );
+                          }
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.person, color: Colors.grey[800]),
+                        title: Text('교수 정보 관리'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ProfProfile()),
+                          );
+                        },
+                      ),
+                      ListTile(
+                          leading: Icon(Icons.note_alt, color: Colors.grey[800]),
+                          title: Text('과목 정보 수정'),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MSmainASS()),
+                            );
+                          }
+                      ),
+                      ListTile(
+                          leading: Icon(Icons.edit_note, color: Colors.grey[800]),
+                          title: Text('졸업인증제 항목 관리'),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => GScoreEditor()),
+                            );
+                          }
+                      ),
+                      ListTile(
+                          leading: Icon(Icons.playlist_add_check, color: Colors.grey[800]),
+                          title: Text('졸업인증제 일괄 승인'),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => AdminGScoreForm()),
+                            );
+                          }
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.search, color: Colors.grey[800]),
+                        title: Text('졸업인증점수 검색'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AdminCheckPage()),
+                          );
+                        },
+                      ),
+                      ListTile(
+                          leading: Icon(Icons.dynamic_feed, color: Colors.grey[800]),
+                          title: Text('피드백 및 신고글'),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => FeedBackScreen()),
+                            );
+                          }
+                      ),
+                    ])
+                    : Container(),
               ],
             ),
 
@@ -426,24 +542,24 @@ class _MyDrawerState extends State<MyDrawer> {
                           // 피드백 보내기 로직을 여기에 구현하세요.
                           // feedbackText 변수에 텍스트 필드의 값이 저장되어 있습니다.
                           // 예를 들어, sendFeedback 함수를 호출하여 피드백을 처리한다면:
-                           sendFeedback(feedbackText);
+                          sendFeedback(feedbackText);
 
-                           Navigator.of(context).pop(); // 팝업 창 닫기
+                          Navigator.of(context).pop(); // 팝업 창 닫기
 
-                           ScaffoldMessenger.of(context).showSnackBar(
-                             SnackBar(
-                               content: Text(
-                                 '피드백이 성공적으로 전송되었습니다.',
-                                 style: TextStyle(
-                                   color: Colors.white,
-                                   fontSize: 16.0,
-                                 ),
-                               ),
-                               backgroundColor: Colors.green, // 배경색 설정
-                               duration: Duration(seconds: 3), // 표시 시간 설정
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '피드백이 성공적으로 전송되었습니다.',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                              backgroundColor: Colors.green, // 배경색 설정
+                              duration: Duration(seconds: 3), // 표시 시간 설정
 
-                             ),
-                           );
+                            ),
+                          );
                         },
                       ),
                     ],
