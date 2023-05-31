@@ -1,9 +1,9 @@
 
-import 'package:capstone/screens/notice.dart';
+import 'package:capstone/screens/post/notice.dart';
 import 'package:flutter/material.dart';
-import 'package:capstone/screens/login_form.dart';
-import 'package:capstone/screens/profile.dart';
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/screens/login/login_form.dart';
+import 'package:capstone/screens/login/profile.dart';
+import 'package:capstone/drawer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

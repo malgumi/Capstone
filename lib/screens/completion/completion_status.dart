@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:core';
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/drawer.dart';
 import 'package:capstone/screens/completion/completed_subject_select.dart';
 
 //나의 이수현황 페이지

@@ -3,12 +3,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: '3학년 공지',
-    home: NoticeTalkScreen_3(boardId: 7),
+    title: '4학년 공지',
+    home: NoticeTalkScreen_4(boardId: 8),
   ));
 }
 
@@ -79,15 +79,15 @@ class ChatBubble extends CustomPainter {
   }
 }
 
-class NoticeTalkScreen_3 extends StatefulWidget {
+class NoticeTalkScreen_4 extends StatefulWidget {
   final int boardId;
-  const NoticeTalkScreen_3({Key? key, required this.boardId}) : super(key: key);
+  const NoticeTalkScreen_4({Key? key, required this.boardId}) : super(key: key);
 
   @override
   NoticeTalkScreenState createState() => NoticeTalkScreenState();
 }
 
-class NoticeTalkScreenState extends State<NoticeTalkScreen_3> {
+class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _noticeController = TextEditingController();
@@ -195,7 +195,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_3> {
       // Success
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => NoticeTalkScreen_3(boardId: widget.boardId)),
+        MaterialPageRoute(builder: (context) => NoticeTalkScreen_4(boardId: widget.boardId)),
       );
     }
     else {
@@ -212,7 +212,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_3> {
   //서버로부터 게시글 목록을 가져옴
   Future<List<dynamic>> fetchNotices() async {
     final response = await http
-        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=7'));
+        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=8'));
 
     if (response.statusCode == 200) {
       final List<dynamic> notice = jsonDecode(response.body);
@@ -229,7 +229,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_3> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '3학년 공지',
+          '4학년 공지',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white),
         ),

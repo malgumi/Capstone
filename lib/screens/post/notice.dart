@@ -1,10 +1,10 @@
-import 'package:capstone/screens/notice_all.dart';
-import 'package:capstone/screens/notice_1st.dart';
-import 'package:capstone/screens/notice_2nd.dart';
-import 'package:capstone/screens/notice_3rd.dart';
-import 'package:capstone/screens/notice_4th.dart';
+import 'package:capstone/screens/post/notice_all.dart';
+import 'package:capstone/screens/post/notice_1st.dart';
+import 'package:capstone/screens/post/notice_2nd.dart';
+import 'package:capstone/screens/post/notice_3rd.dart';
+import 'package:capstone/screens/post/notice_4th.dart';
 import "package:flutter/material.dart";
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/drawer.dart';
 
 void main() {
   runApp(MaterialApp(

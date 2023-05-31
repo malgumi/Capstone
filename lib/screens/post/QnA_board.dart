@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:capstone/screens/WritePostScreen.dart';
-import 'package:capstone/screens/PostScreen.dart';
+import 'package:capstone/screens/post/WritePostScreen.dart';
+import 'package:capstone/screens/post/PostScreen.dart';
 import 'package:intl/intl.dart';
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: '구인구직 게시판',
-    home: PartyBoardScreen(),
+    title: 'Q&A게시판',
+    home: QnABoardScreen(),
   ));
 }
 
-class PartyBoardScreen extends StatefulWidget {
+class QnABoardScreen extends StatefulWidget {
   @override
-  FreeBoardScreenState createState() => FreeBoardScreenState();
+  QnABoardScreenState createState() => QnABoardScreenState();
 }
 
-class FreeBoardScreenState extends State<PartyBoardScreen> {
-  late Future<List<dynamic>> _jobposts;
+class QnABoardScreenState extends State<QnABoardScreen> {
+  late Future<List<dynamic>> _posts;
   TextEditingController _searchController = TextEditingController();
   List<dynamic> _filteredPosts = [];
   List<dynamic> allPosts = [];
@@ -27,11 +27,11 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
   @override
   void initState() {
     super.initState();
-    _jobposts = fetchPosts();
+    _posts = fetchPosts();
   }
 
   Future<List<dynamic>> fetchPosts() async {
-    final response = await http.get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=2'));
+    final response = await http.get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=4'));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -40,7 +40,7 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
   }
 
   void _filterPosts(String keyword) async {
-    allPosts = await _jobposts;
+    allPosts = await _posts;
     _filteredPosts = allPosts.where((post) {
       final title = post['post_title'].toLowerCase();
       final content = post['post_content'].toLowerCase();
@@ -56,16 +56,13 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
     DateTime postDateTime = DateTime.parse(post['post_date']);
     DateTime updatedDateTime = postDateTime.add(Duration(hours: 9));
     return GestureDetector(
-      onTap: () async {
-        await Navigator.push(
+      onTap: () {
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PostScreen(post: post),
           ),
         );
-        setState(() {
-          _jobposts = fetchPosts();
-        });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -111,7 +108,7 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    post['student_id'].toString(),
+                    post['student_id'].toString().substring(2, 4) + '학번',
                     style: TextStyle(
                       fontSize: 14.0,
                       color: Colors.grey,
@@ -138,7 +135,7 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '구인구직게시판',
+          'Q&A게시판',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20.0,
@@ -175,15 +172,21 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
             ),
             Expanded(
               child: FutureBuilder<List<dynamic>>(
-                future: _jobposts,
+                future: _posts,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final jobposts = snapshot.data!;
-                    final posts = _searchController.text.isEmpty ? jobposts : _filteredPosts;
+                    final posts = snapshot.data!;
+                    final filterposts = _searchController.text.isEmpty ? posts : _filteredPosts;
+                    final int index81 = posts.indexWhere((post) => post['post_id'] == 81);
+                    // 81번 게시물을 찾아서 해당 게시물을 리스트의 맨 앞으로 이동
+                    if (index81 != -1) {
+                      final post81 = posts.removeAt(index81);
+                      posts.insert(0, post81);
+                    }
                     return ListView.builder(
-                      itemCount: posts.length,
+                      itemCount: filterposts.length,
                       itemBuilder: (context, index) {
-                        return _buildPostItem(context, posts[index]);
+                        return _buildPostItem(context, filterposts[index]);
                       },
                     );
                   } else if (snapshot.hasError) {
@@ -193,6 +196,7 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
                   }
                 },
               ),
+
             ),
           ],
         ),
@@ -202,12 +206,12 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => WritePostScreen(boardId: 2),
+              builder: (context) => WritePostScreen(boardId: 4),
             ),
           ).then((value) {
             if (value == true) {
               setState(() {
-                _jobposts = fetchPosts();
+                _posts = fetchPosts();
               });
             }
           });

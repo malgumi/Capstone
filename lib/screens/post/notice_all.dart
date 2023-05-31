@@ -3,12 +3,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: '4학년 공지',
-    home: NoticeTalkScreen_4(boardId: 8),
+    title: '전체 공지',
+    home: NoticeTalkScreen(boardId: 3),
   ));
 }
 
@@ -28,49 +28,49 @@ class ChatBubble extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var path = Path();
-    path.addRRect(
-      RRect.fromLTRBAndCorners(
-        _x,
-        0,
-        size.width,
-        size.height,
-        bottomRight: Radius.circular(_radius),
-        bottomLeft: Radius.circular(_radius),
-        topRight: Radius.circular(_radius),
-        topLeft: Radius.circular(_radius),
-      ),
-    );
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill,
-    );
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = this.color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = _borderWidth,
-    );
-    var clipPath = Path();
-    clipPath.moveTo(0, 0);//여기가 최좌단 꼭짓점
-    clipPath.lineTo(_x, (size.height/10));
-    clipPath.lineTo(_x, _y);//위쪽 꼭짓점
-    canvas.clipPath(clipPath);
-    canvas.drawRRect(
-      RRect.fromLTRBAndCorners(
-        0,
-        0.0,
-        _x,
-        size.height,
-        topRight: Radius.circular(_radius),
-      ),
-      Paint()
-        ..color = this.color
-        ..style = PaintingStyle.fill,
-    );
+      var path = Path();
+      path.addRRect(
+        RRect.fromLTRBAndCorners(
+          _x,
+          0,
+          size.width,
+          size.height,
+          bottomRight: Radius.circular(_radius),
+          bottomLeft: Radius.circular(_radius),
+          topRight: Radius.circular(_radius),
+          topLeft: Radius.circular(_radius),
+        ),
+      );
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.fill,
+      );
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = this.color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = _borderWidth,
+      );
+      var clipPath = Path();
+      clipPath.moveTo(0, 0);//여기가 최좌단 꼭짓점
+      clipPath.lineTo(_x, (size.height/10));
+      clipPath.lineTo(_x, _y);//위쪽 꼭짓점
+      canvas.clipPath(clipPath);
+      canvas.drawRRect(
+        RRect.fromLTRBAndCorners(
+          0,
+          0.0,
+          _x,
+          size.height,
+          topRight: Radius.circular(_radius),
+        ),
+        Paint()
+          ..color = this.color
+          ..style = PaintingStyle.fill,
+      );
   }
 
   @override
@@ -79,15 +79,15 @@ class ChatBubble extends CustomPainter {
   }
 }
 
-class NoticeTalkScreen_4 extends StatefulWidget {
+class NoticeTalkScreen extends StatefulWidget {
   final int boardId;
-  const NoticeTalkScreen_4({Key? key, required this.boardId}) : super(key: key);
+  const NoticeTalkScreen({Key? key, required this.boardId}) : super(key: key);
 
   @override
   NoticeTalkScreenState createState() => NoticeTalkScreenState();
 }
 
-class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
+class NoticeTalkScreenState extends State<NoticeTalkScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _noticeController = TextEditingController();
@@ -113,7 +113,6 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
   //권한받아오기
   int? _permission;
   void studentinfo() async {
-
     setState(() => _isLoading = true);
 
     final storage = FlutterSecureStorage();
@@ -122,12 +121,12 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('게시글 작성에 실패했습니다. (로그인 만료)')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('게시글 작성에 실패했습니다. (로그인 만료)'),
+        ));
       });
       return;
     }
-
 
     final response = await http.get(
       Uri.parse('http://3.39.88.187:3000/user/student'),
@@ -139,11 +138,10 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
 
     if (response.statusCode == 201) {
       // Success
-
       final responseData = jsonDecode(response.body);
       setState(() {
         _permission = responseData[0]['permission'];
-        _isLoading = false;//임의추가
+        _isLoading = false; //임의추가
       });
     } else {
       // Failure
@@ -155,7 +153,6 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
       });
     }
   }
-
 
   //글 작성
   void _submitForm() async {
@@ -169,8 +166,9 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
       setState(() {
         _isLoading = false;
         _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('게시글 작성에 실패했습니다. (로그인 만료)')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('게시글 작성에 실패했습니다. (로그인 만료)'),
+        ));
       });
       return;
     }
@@ -195,10 +193,9 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
       // Success
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => NoticeTalkScreen_4(boardId: widget.boardId)),
+        MaterialPageRoute(builder: (context) => NoticeTalkScreen(boardId: widget.boardId)),
       );
-    }
-    else {
+    } else {
       // Failure
       final responseData = jsonDecode(response.body);
       setState(() {
@@ -208,18 +205,17 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
     }
   }
 
-
   //서버로부터 게시글 목록을 가져옴
   Future<List<dynamic>> fetchNotices() async {
-    final response = await http
-        .get(Uri.parse('http://3.39.88.187:3000/post/posts?board_id=8'));
+    final response = await http.get(
+      Uri.parse('http://3.39.88.187:3000/post/posts?board_id=3'),
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> notice = jsonDecode(response.body);
 
       return notice;
-    }
-    else {
+    } else {
       throw Exception('Failed to load notices');
     }
   }
@@ -229,15 +225,17 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '4학년 공지',
+          '전체 공지',
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Color(0xffC1D3FF),
       ),
       drawer: MyDrawer(),
-      backgroundColor: Colors.white,//여기까진 고정
+      backgroundColor: Colors.white,
 
       body: Container(
         padding: EdgeInsets.only(top: 10), // 패딩 조정
@@ -254,11 +252,10 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
                       itemCount: notices.length,
                       itemBuilder: (BuildContext context, int index) {
                         dynamic notice = notices[index];
-                        return buildNoticeItem(context, notice);//, token
+                        return buildNoticeItem(context, notice);
                       },
                     );
-                  }
-                  else if (snapshot.hasError) {
+                  } else if (snapshot.hasError) {
                     return Center(
                       child: Text('${snapshot.error}'),
                     );
@@ -270,11 +267,11 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
               ),
             ),
             Container(
-              child: buildTextComposer(),//메시지 입력창
-            )
+              child: buildTextComposer(),
+            ),
           ],
         ),
-      )
+      ),
     );
   }
 
@@ -326,6 +323,7 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
     );
   }
 
+
   Widget buildTextComposer() {
     if (_permission == 1) {
       return SizedBox.shrink();
@@ -336,31 +334,32 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
           decoration: BoxDecoration(
-              border: Border(
-                  top: BorderSide(
-                    color: Colors.black12,
-                    width: 0.5,
-                  )
+            border: Border(
+              top: BorderSide(
+                color: Colors.black12,
+                width: 0.5,
               )
+            )
           ),
           child: Row(
             children: <Widget>[
               Flexible(
                 child: TextField(
                   maxLines: null,
-                  controller: _titleController,//컨트롤러 연결
+                  controller: _titleController,
                   decoration: InputDecoration.collapsed(hintText: '메시지 보내기'),
                 ),
               ),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
-                child:
-                IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: _isLoading ? null : () {
-                      _submitForm();
-                      _noticeController.clear();//입력한 텍스트 초기화
-                    }
+                child: IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                    _submitForm();
+                    _noticeController.clear();
+                  },
                 ),
               ),
             ],
@@ -370,6 +369,3 @@ class NoticeTalkScreenState extends State<NoticeTalkScreen_4> {
     }
   }
 }
-
-
-

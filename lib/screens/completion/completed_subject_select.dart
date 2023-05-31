@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:capstone/screens/drawer.dart';
+import 'package:capstone/drawer.dart';
 import 'package:capstone/screens/completion/completion_status.dart';
 
 //이수과목 선택 페이지
