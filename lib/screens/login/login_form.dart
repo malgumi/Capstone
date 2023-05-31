@@ -85,6 +85,55 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> sendVerificationEmail(String email) async {
+    final String apiUrl = 'http://3.39.88.187:3000/user/sendverificationpassword';
+
+    if (!email.endsWith("@gm.hannam.ac.kr")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("이메일 형식이 올바르지 않습니다."),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'email': email,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("비밀번호 초기화가 완료되었습니다."),
+          ),
+        );
+
+        return null;
+
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("비밀번호 초기화 이메일 발송에 실패했습니다."),
+          ),
+        );
+      }
+    } catch (error) {
+      print(error);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("오류가 발생했습니다."),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) { //Widget 여기서 UI화면 작성
     return Scaffold(
@@ -129,47 +178,108 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Padding( //세번째 padding
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Material(
-                    elevation: 5.0, //그림자효과
-                    borderRadius: BorderRadius.circular(30.0), //둥근효과
-                    color: const Color(0xffC1D3FF),
-                    child: MaterialButton( //child - 버튼을 생성
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          final String? errorMsg = await loginUser(student_id.text, password.text);
-                          if (errorMsg == null) { // 로그인 성공
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => MyHomePage()),
-                            );
-                          } else { // 로그인 실패
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg), backgroundColor: Colors.red,));
-                          }
+                  child: ElevatedButton( //child - 버튼을 생성
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        final String? errorMsg = await loginUser(student_id.text, password.text);
+                        if (errorMsg == null) { // 로그인 성공
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => MyHomePage()),
+                          );
+                        } else { // 로그인 실패
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg), backgroundColor: Colors.red,));
                         }
-                      },
-                      child: Text(
-                        "로그인",
-                        style: style.copyWith(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xffC1D3FF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
+                    ),
+                    child: Text(
+                      "로그인",
+                      style: style.copyWith(
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
                 SizedBox(height: 10), //View같은 역할 중간에 띄는 역할
-                Center( //Center <- Listview
-                  child: InkWell( //InkWell을 사용 -- onTap이 가능한 이유임.
-                    child: Text(
-                      '가입하기',
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignUpPage()),
-                      );
-                    },
+                Padding( //네번째 padding
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignUpPage()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: const Color(0xffC1D3FF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: Text(
+                            "가입하기",
+                            style: style.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            String enteredEmail = '';
+
+                            enteredEmail = await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('임시 비밀번호 발급을 위해 이메일 입력'),
+                                  content: TextField(
+                                    onChanged: (value) {
+                                      enteredEmail = value;
+                                    },
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('확인'),
+                                      onPressed: () {
+                                        sendVerificationEmail(enteredEmail);
+                                        Navigator.of(context).pop(enteredEmail);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: const Color(0xffC1D3FF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: Text(
+                            "비밀번호 찾기",
+                            style: style.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -178,4 +288,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
