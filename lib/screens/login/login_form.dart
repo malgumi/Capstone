@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Future<String?> loginUser(String studentId, String password) async {
-    final String apiUrl = 'http://3.39.88.187:3000/user/login?student_id=$studentId&password=$password&fcm_token=$fcmToken';
+    final String apiUrl = 'http://3.39.88.187:3000/user/login';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: <String, String>{
@@ -68,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       body: jsonEncode(<String, String>{
         'student_id': studentId, // 로그인에 필요한 정보 전달
         'password': password,
+        'fcmToken': fcmToken,
       }),
     );
 
@@ -193,15 +194,20 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
+                      shadowColor:  const Color(0xffC1D3FF),
                       primary: const Color(0xffC1D3FF),
+                      side: BorderSide(color: const Color(0xffC1D3FF)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
+                        borderRadius: BorderRadius.circular(9.0),
                       ),
+                      fixedSize: Size(double.infinity, 38), // 버튼의 세로 길이를 50으로 설정
                     ),
                     child: Text(
                       "로그인",
                       style: style.copyWith(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontSize: 22.0,
+                      ),
                     ),
                   ),
                 ),
@@ -211,31 +217,38 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
+                        child: OutlinedButton(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => SignUpPage()),
                             );
                           },
-                          style: ElevatedButton.styleFrom(
+                          style: OutlinedButton.styleFrom(
                             primary: const Color(0xffC1D3FF),
+                            side: BorderSide(color: Colors.white ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                              borderRadius: BorderRadius.circular(18.0),
                             ),
                           ),
                           child: Text(
                             "가입하기",
                             style: style.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                              color: const Color(0xffC1D3FF),
+
                             ),
                           ),
                         ),
                       ),
                       SizedBox(width: 10),
+                      Container(
+                        width: 1,
+                        height: 40,
+                        color: const Color(0xffC1D3FF),
+                      ),
+                      SizedBox(width: 10),
                       Expanded(
-                        child: ElevatedButton(
+                        child: OutlinedButton(
                           onPressed: () async {
                             String enteredEmail = '';
 
@@ -262,17 +275,17 @@ class _LoginPageState extends State<LoginPage> {
                               },
                             );
                           },
-                          style: ElevatedButton.styleFrom(
+                          style: OutlinedButton.styleFrom(
                             primary: const Color(0xffC1D3FF),
+                            side: BorderSide(color:Colors.white ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+                              borderRadius: BorderRadius.circular(18.0),
                             ),
                           ),
                           child: Text(
                             "비밀번호 찾기",
                             style: style.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                              color: const Color(0xffC1D3FF),
                             ),
                           ),
                         ),
@@ -280,6 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
+
               ],
             ),
           ),
