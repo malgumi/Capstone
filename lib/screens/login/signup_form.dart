@@ -183,11 +183,18 @@ class _SignUpPageState extends State<SignUpPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+
           content: SingleChildScrollView(
             child: ListBody(
               children: _grades.map((grade) {
                 return GestureDetector(
-                  child: Text(grade),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      grade,
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ),
                   onTap: () {
                     setState(() {
                       _selectedGrade = grade;
@@ -236,10 +243,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 22.0),
                 child: Material(
                   elevation: 5.0,
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(9.0),
+                  shadowColor:  const Color(0xffC1D3FF),
                   color: const Color(0xffC1D3FF),
                   child: MaterialButton(
                     onPressed: () async {
@@ -251,11 +259,13 @@ class _SignUpPageState extends State<SignUpPage> {
                           content: Text("인증메일 발송에 실패했습니다."),
                         ));
                       }
+
                     },
+
                     child: Text(
                       "인증하기",
                       style: style.copyWith(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white, fontSize: 21.0),
                     ),
                   ),
                 ),
@@ -335,11 +345,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 22.0),
                 child: Material(
                   elevation: 5.0,
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(9.0),
                   color: const Color(0xffC1D3FF),
+                  shadowColor:  const Color(0xffC1D3FF),
                   child: MaterialButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
@@ -366,9 +377,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       }
                     },
                     child: Text(
-                      "회원 가입",
+                      "회원가입",
                       style: style.copyWith(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white, fontSize: 21.0),
                     ),
                   ),
                 ),
