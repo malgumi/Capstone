@@ -16,7 +16,7 @@ import 'package:capstone/screens/login/login_form.dart';
 import 'package:capstone/screens/post/QnA_board.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:capstone/screens/post/notice.dart';
+import 'package:capstone/screens/post/notice_1st.dart';
 import 'package:capstone/screens/prof/prof_profile.dart';
 import 'package:capstone/screens/gScore/gscore_admin_editor.dart';
 import 'package:capstone/screens/gScore/gscore_admin_list.dart';
@@ -325,7 +325,7 @@ class _MyDrawerState extends State<MyDrawer> {
                         _updateNotificationStatus();
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => Notice()),
+                          MaterialPageRoute(builder: (context) => NoticeTalkScreen_1(boardId: 3)),
                         );
                       },
                     ),

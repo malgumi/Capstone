@@ -1,5 +1,5 @@
 
-import 'package:capstone/screens/post/notice.dart';
+import 'package:capstone/screens/post/notice_1st.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone/screens/login/login_form.dart';
 import 'package:capstone/screens/login/profile.dart';
@@ -108,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Notice()),
+                  MaterialPageRoute(builder: (context) => NoticeTalkScreen_1(boardId: 3)),
                 );
               },
               child: Text(
