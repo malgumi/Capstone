@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:capstone/screens/post/PostScreen.dart';
+import 'package:capstone/screens/post/WritePostScreen.dart';
 import 'package:intl/intl.dart';
 import 'package:capstone/drawer.dart';
-
 void main() {
   runApp(MaterialApp(
     title: '피드백',

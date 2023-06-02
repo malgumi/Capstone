@@ -14,7 +14,6 @@ import 'package:flutter/foundation.dart'
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
-///
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -57,7 +56,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBYa08WarEIWb1RncltDLrdS3ogm9k4gfk',
-    appId: '1:241700246642:android:57d8a5cb628bc1fe4adeeb',
+    appId: '1:241700246642:android:472a20f89722a8cb4adeeb',
     messagingSenderId: '241700246642',
     projectId: 'capstone-c28c6',
     databaseURL: 'https://capstone-c28c6-default-rtdb.asia-southeast1.firebasedatabase.app',
