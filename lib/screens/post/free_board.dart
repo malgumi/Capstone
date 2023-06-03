@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:capstone/screens/post/PostScreen.dart';
 import 'package:capstone/screens/post/WritePostScreen.dart';
 import 'package:intl/intl.dart';
-import 'package:capstone/drawer.dart';
 void main() {
   runApp(MaterialApp(
     title: '자유게시판 앱',
@@ -169,15 +168,16 @@ class FreeBoardScreenState extends State<FreeBoardScreen> {
       ),
     );
   }
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(
           '자유게시판',
           style: TextStyle(
@@ -190,7 +190,6 @@ class FreeBoardScreenState extends State<FreeBoardScreen> {
         centerTitle: true,
         elevation: 0.0,
       ),
-      drawer: MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

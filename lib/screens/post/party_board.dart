@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:capstone/screens/post/WritePostScreen.dart';
 import 'package:capstone/screens/post/PostScreen.dart';
 import 'package:intl/intl.dart';
-import 'package:capstone/drawer.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -137,6 +136,12 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(
           '구인구직게시판',
           style: TextStyle(
@@ -149,7 +154,6 @@ class FreeBoardScreenState extends State<PartyBoardScreen> {
         centerTitle: true,
         elevation: 0.0,
       ),
-      drawer: MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
