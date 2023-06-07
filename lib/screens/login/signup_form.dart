@@ -6,6 +6,8 @@ import 'package:capstone/screens/login/login_form.dart';
 import 'package:capstone/main.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+
+
 class SignUpPage extends StatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -32,6 +34,8 @@ class _SignUpPageState extends State<SignUpPage> {
     '3학년',
     '4학년',
   ];
+
+
 
   @override
   void initState() {
@@ -62,7 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<void> sendVerificationEmail(String email) async {
-    final String apiUrl = 'http://203.247.42.144:443/user/sendverificationemail';
+    final String apiUrl = 'http://3.39.88.187:3000/user/sendverificationemail';
 
     if (!email.endsWith("@gm.hannam.ac.kr")) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -107,14 +111,16 @@ class _SignUpPageState extends State<SignUpPage> {
       print(error);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("오류났습니다."),
+          content: Text("오류가 발생했습니다."),
         ),
       );
     }
   }
 
+
+
   Future<void> signup(String email, String verificationCode, String name, String password, int grade) async {
-    final String apiUrl = 'http://203.247.42.144:443/user/signup';
+    final String apiUrl = 'http://3.39.88.187:3000/user/signup';
     final String studentId = email.split('@')[0];
     final String nameValue = name.trim();
     final String emailValue = email.trim();
@@ -210,6 +216,8 @@ class _SignUpPageState extends State<SignUpPage> {
       },
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
