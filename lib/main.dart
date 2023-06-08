@@ -187,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       }
 
       final response = await http.get(
-        Uri.parse('http://3.39.88.187:3000/user/student'),
+        Uri.parse('http://203.247.42.144:443/user/student'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': token,
@@ -199,7 +199,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
         final responseData = jsonDecode(response.body);
         setState(() {
-          print(responseData[0]['isTempPassword']);
           isTempPassword = responseData[0]['isTempPassword'].toString();
         });
       } else {
@@ -251,7 +250,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     }
 
     final response = await http.get(
-      Uri.parse('http://3.39.88.187:3000/user/student'),
+      Uri.parse('http://203.247.42.144:443/user/student'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': token,
@@ -263,7 +262,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
       final responseData = jsonDecode(response.body);
       setState(() {
-        print(responseData[0]['isTempPassword']);
         isTempPassword = responseData[0]['isTempPassword'].toString();
       });
     } else {
@@ -353,7 +351,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
                   // Send password change request
                   final response = await http.put(
-                    Uri.parse('http://3.39.88.187:3000/user/password'),
+                    Uri.parse('http://203.247.42.144:443/user/password'),
                     headers: <String, String>{
                       'Content-Type': 'application/json; charset=UTF-8',
                       'Authorization': token
