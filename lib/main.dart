@@ -51,7 +51,7 @@ void main() async {
     sound: true,
   );
   print('User granted permission: ${settings.authorizationStatus}');
-  //======↑IOS용 권한 허용 코드↑=========
+  //======↑IOS용 권한 허용 코드↑==========
   runApp(MyApp());
 
 }
@@ -230,6 +230,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         });
       });
   }
+
 
 
 
