@@ -213,13 +213,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       }
 
       // initState가 호출된 후 한 프레임이 렌더링된 이후에 실행되는 콜백
-
-      print(isTempPassword);
       if (isTempPassword == "1") {
-        print("ABCD");
         showChangePasswordDialog();
-        print("EFG");
-
       }
     });
 
@@ -286,20 +281,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
 
   Future<void> showChangePasswordDialog() async {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          TextEditingController _newPasswordController = TextEditingController();
-          TextEditingController _confirmPasswordController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
 
-          return AlertDialog(
-            title: Text("비밀번호 변경"),
-            content: Column(
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController _newPasswordController = TextEditingController();
+        TextEditingController _confirmPasswordController = TextEditingController();
+
+        return AlertDialog(
+          title: Text("비밀번호 변경"),
+          content: Form(
+            key: _formKey, // _formKey 추가
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
                   controller: _newPasswordController,
-
                   decoration: InputDecoration(
                     labelText: "새로운 비밀번호",
                     hintText: "보안을 위해 비밀번호를 변경해주세요.",
@@ -336,11 +334,65 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ),
               ],
             ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final storage = FlutterSecureStorage();
+                  final token = await storage.read(key: 'token');
+                  if (token == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('토큰이 없습니다.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
 
-          );
-        });
+                  // Send password change request
+                  final response = await http.put(
+                    Uri.parse('http://3.39.88.187:3000/user/password'),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json; charset=UTF-8',
+                      'Authorization': token
+                    },
+                    body: jsonEncode(<String, String>{
+                      'password': _newPasswordController.text,
+                    }),
+                  );
 
+                  if (response.statusCode == 201) {
+                    // Password change success
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('비밀번호가 변경되었습니다.'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                  } else {
+                    // Password change failed
+                    final responseData = jsonDecode(response.body);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(responseData['message']),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text('변경'),
+            ),
+          ],
+        );
+      },
+    );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -1099,182 +1151,3 @@ class PercentDonutPaint extends CustomPainter {
   }
 }
 
-class ChangePasswordDialog extends StatefulWidget {
-
-  @override
-  _ChangePasswordDialogState createState() => _ChangePasswordDialogState();
-}
-
-class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
-  final _formKey = GlobalKey<FormState>();
-  String _errorMessage = '';
-  bool _isLoading = false;
-  late final TextEditingController _currentPasswordController;
-  late final TextEditingController _newPasswordController;
-  late final TextEditingController _confirmPasswordController;
-
-  @override
-  void initState() {
-    super.initState();
-    _studentinfo();
-    _currentPasswordController = TextEditingController();
-    _newPasswordController = TextEditingController();
-    _confirmPasswordController = TextEditingController();
-  }
-
-  String? _accountPassword;
-
-  void _studentinfo() async {
-    setState(() => _isLoading = true);
-
-    final storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'token');
-    if (token == null) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = '토큰이 없습니다.';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('비밀번호 변경에 실패했습니다. (로그인 만료)'),
-          backgroundColor: Colors.red,
-        ));
-      });
-      return;
-    }
-
-    final response = await http.get(
-      Uri.parse('http://3.39.88.187:3000/user/student'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': token,
-      },
-    );
-
-    if (response.statusCode == 201) {
-      // Success
-
-      final responseData = jsonDecode(response.body);
-      setState(() {
-        _accountPassword = responseData[0]['password'];
-      });
-    } else {
-      // Failure
-      setState(() {
-        final responseData = jsonDecode(response.body);
-
-        _isLoading = false;
-        _errorMessage = responseData['message'];
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _currentPasswordController.dispose();
-    _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('비밀번호 변경'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _newPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: '새로운 비밀번호',
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return "비밀번호를 입력 해 주세요";
-                } else if (value.length < 8) {
-                  return "비밀번호는 8자 이상이어야 합니다";
-                } else if (!RegExp(
-                    r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>]).{8,}$')
-                    .hasMatch(value) ||
-                    value.contains('?')) {
-                  return "비밀번호는 대문자, 소문자, 숫자, 특수문자를\n포함하며 '?' 문자를 사용할 수 없습니다";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _confirmPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: '새로운 비밀번호 확인',
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return '새로운 비밀번호를 다시 입력하세요.';
-                }
-                if (value != _newPasswordController.text) {
-                  return '새로운 비밀번호와 일치하지 않습니다.';
-                }
-                return null;
-              },
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        ElevatedButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              final storage = FlutterSecureStorage();
-              final token = await storage.read(key: 'token');
-              if (token == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('토큰이 없습니다.'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-                return;
-              }
-
-              // Send password change request
-              final response = await http.put(
-                Uri.parse('http://3.39.88.187:3000/user/password'),
-                headers: <String, String>{
-                  'Content-Type': 'application/json; charset=UTF-8',
-                  'Authorization': token
-                },
-                body: jsonEncode(<String, String>{
-                  'password': _newPasswordController.text,
-                }),
-              );
-
-              if (response.statusCode == 201) {
-                // Password change success
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('비밀번호가 변경되었습니다.'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-                Navigator.of(context).pop();
-              } else {
-                // Password change failed
-                final responseData = jsonDecode(response.body);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(responseData['message']),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            }
-          },
-          child: Text('변경'),
-        ),
-      ],
-    );
-  }
-}
